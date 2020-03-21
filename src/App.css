@@ -3,3 +3,13 @@
   max-width: 800px;
   margin: auto;
 }
+
+.MuiFormControl-root {
+  width: 200px;
+  margin-bottom: 1rem !important;
+}
+
+button {
+  width: 200px;
+  margin-bottom: 1rem !important;
+}
