@@ -14,7 +14,6 @@ function AddUser() {
     user['username'] = username;
 
     const key = database.ref().child('users').push().key;
-    console.log(key);
     database.ref().child('users').update({[key]: user}).catch(err => {
       console.log(err);
     });

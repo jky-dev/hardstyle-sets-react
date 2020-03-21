@@ -11,8 +11,6 @@ function GetUser() {
     database.ref('/users').once('value').then(function(snapshot) {
       var users = [];
       snapshot.forEach(user => {
-        console.log(user.key);
-        console.log(user.val());
         const userObj = {
           key: user.key,
           val: user.val(),
@@ -20,7 +18,6 @@ function GetUser() {
         users.push(userObj);
       });
       setUserList(users);
-      console.log(users);
     }).catch(err => {
       console.log(err);
     })
