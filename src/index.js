@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './app';
 
-import firebase from 'firebase';
-
-import "firebase/database";
-
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 const config = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
