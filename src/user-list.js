@@ -5,14 +5,9 @@ import { Card,
   IconButton,
   Grid,
   CardContent} from '@material-ui/core';
-
 import DeleteIcon from '@material-ui/icons/Delete';
 
 function UserList(props) {
-  const handleDeleteClick = (key) => {
-    console.log('delete', key);
-  }
-
   return (
     <div>
       <Grid
@@ -26,9 +21,9 @@ function UserList(props) {
           <Grid item key={user.key}>
             <Card>
               <CardHeader
-                title={`Welcome ${user.val.username}`}
+                title={`Hi ${user.val.username}!`}
                 action={
-                  <IconButton aria-label="settings" onClick={() => handleDeleteClick(user.key)}>
+                  <IconButton aria-label="settings" onClick={() => props.handleDeleteClick(user)}>
                     <DeleteIcon />
                   </IconButton>
                 } />

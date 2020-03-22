@@ -61,6 +61,7 @@ function AddUser() {
       </div>
       <div>
         <Button
+          className="user-button"
           variant="contained"
           color="primary"
           onClick={addUser} >

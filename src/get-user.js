@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './get-user.css';
+import DeleteUserDialog from './delete-user-dialog';
 import UserList from './user-list';
 import { Button } from '@material-ui/core';
 
@@ -7,9 +8,28 @@ import { database } from './index';
 
 function GetUser() {
   const [userList, setUserList] = useState([]);
+  const [openDialog, setDialogOpen] = useState(false);
+  const [user, setUser] = useState({
+    key: '',
+      val: { 
+        username: '', 
+        nickname: '',
+      }
+    }
+  );
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  }
+
+  const handleDeleteClick = (user) => {
+    setUser(user);
+    setDialogOpen(true);
+    console.log('delete', user);
+  }
 
   function getUsers() {
-    database.ref('/users').once('value').then(function(snapshot) {
+    database.ref('/users').on('value', snapshot => {
       var users = [];
       snapshot.forEach(user => {
         const userObj = {
@@ -19,22 +39,24 @@ function GetUser() {
         users.push(userObj);
       });
       setUserList(users);
-    }).catch(err => {
-      console.log(err);
-    })
+    });
   }
 
   return (
     <div className="getUser">
       <div className="getUserButton">
         <Button
+          className="user-button"
           variant="contained"
           color="primary"
           onClick={getUsers}>
           Get Users
         </Button>
       </div>
-      <UserList users={userList} />
+      <UserList
+        users={userList}
+        handleDeleteClick={handleDeleteClick} />
+      <DeleteUserDialog open={openDialog} handleClose={handleDialogClose} user={user}/>
     </div>
   )
 }

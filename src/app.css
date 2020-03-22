@@ -7,7 +7,7 @@ h1 {
   text-align: center;
 }
 
-.MuiFormControl-root, .MuiButton-root {
+.MuiFormControl-root, .user-button {
   width: 200px;
   margin-bottom: 1rem !important;
 }
