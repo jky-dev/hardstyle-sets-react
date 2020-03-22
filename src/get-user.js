@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './get-user.css';
 import UserList from './user-list';
 import { Button } from '@material-ui/core';
 
@@ -24,13 +25,15 @@ function GetUser() {
   }
 
   return (
-    <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={getUsers}>
-        Get Users
-      </Button>
+    <div className="getUser">
+      <div className="getUserButton">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={getUsers}>
+          Get Users
+        </Button>
+      </div>
       <UserList users={userList} />
     </div>
   )

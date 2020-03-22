@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import './add-user.css';
+
 import { database } from './index';
 import { Button,
   Snackbar,
@@ -40,7 +42,7 @@ function AddUser() {
   }
 
   return (
-    <div>
+    <div className="addUser">
       <div>
         <TextField
           id="username"
