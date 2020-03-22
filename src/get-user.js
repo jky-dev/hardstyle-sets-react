@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 
 import { database } from './index';
 
-function GetUser() {
+const GetUser = () => {
   const [userList, setUserList] = useState([]);
   const [openDialog, setDialogOpen] = useState(false);
   const [user, setUser] = useState({
@@ -28,7 +28,12 @@ function GetUser() {
     console.log('delete', user);
   }
 
-  function getUsers() {
+  const getUsers = () => {
+    if (userList.length !== 0) {
+      setUserList([]);
+      return;
+    }
+
     database.ref('/users').on('value', snapshot => {
       var users = [];
       snapshot.forEach(user => {
@@ -49,8 +54,8 @@ function GetUser() {
           className="user-button"
           variant="contained"
           color="primary"
-          onClick={getUsers}>
-          Get Users
+          onClick={() => getUsers()}>
+          {userList.length === 0 ? 'Show Users' : 'Hide Users'}
         </Button>
       </div>
       <UserList

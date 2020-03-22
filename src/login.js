@@ -1,0 +1,51 @@
+import React from 'react';
+import './login.css';
+import { auth, googleProvider } from './index';
+import { Button, } from '@material-ui/core';
+
+const Login = () => {
+  const loginWithGoogle = () => {
+    auth.signInWithPopup(googleProvider).then(result => {
+      console.log('Logged in with Google');
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  const logout = () => {
+    auth.signOut().then(() => {
+      console.log('Logged out');
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+
+  return (
+    <div>
+      <div className="login-button">
+        {sessionStorage.getItem('user')
+          ? <div>
+              <Button
+                className="user-button"
+                variant="contained"
+                color="secondary"
+                onClick={() => logout()} >
+                Logout
+              </Button>
+            </div>
+          : <div>
+              <Button
+                className="user-button"
+                variant="contained"
+                color="primary"
+                onClick={() => loginWithGoogle()} >
+                Login
+              </Button>
+            </div>
+          }
+      </div>
+    </div>
+  )
+}
+
+export default Login;
