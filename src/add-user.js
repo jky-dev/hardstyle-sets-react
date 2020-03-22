@@ -1,22 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { database } from './index';
-import { TextField, Button } from '@material-ui/core';
+import { Button,
+  Snackbar,
+  TextField,
+ } from '@material-ui/core';
 
 function AddUser() {
-  var username;
-  var nickname;
+  const [message, setMessage] = useState('');
+  const [open, setOpen] = useState(false);
+  const [nickname, setNickname] = useState('');
+  const [username, setUsername] = useState('');
 
-  function addUser() {
-    if (!nickname || !username) return;
+  const addUser = () => {
+    if (!nickname || !username) {
+      setMessage('Unable to add user');
+      setOpen(true);
+      return;
+    }
 
     var user = {};
     user['nickname'] = nickname;
     user['username'] = username;
-
+    
     const key = database.ref().child('users').push().key;
-    database.ref().child('users').update({[key]: user}).catch(err => {
+    database.ref().child('users').update({[key]: user}).then(() => {
+      setMessage(`Added user: ${username}, nick: ${nickname}!`);
+      setOpen(true);
+    }).catch(err => {
       console.log(err);
     });
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
   }
 
   return (
@@ -26,7 +46,7 @@ function AddUser() {
           id="username"
           label="Username"
           onChange={(e) => {
-            username = e.target.value;
+            setUsername(e.target.value);
           }} />
       </div>
       <div>
@@ -34,7 +54,7 @@ function AddUser() {
           id="nickname"
           label="Nickname"
           onChange={(e) => {
-            nickname = e.target.value;
+            setNickname(e.target.value);
           }} />
       </div>
       <div>
@@ -45,6 +65,8 @@ function AddUser() {
           Add User
         </Button>
       </div>
+      <Snackbar autoHideDuration={5000} open={open} message={message} onClose={handleClose}>
+      </Snackbar>
     </div>
   )
 }
