@@ -59,7 +59,7 @@ function AddUser() {
             setNickname(e.target.value);
           }} />
       </div>
-      <div>
+      <div className="center-button">
         <Button
           className="user-button"
           variant="contained"

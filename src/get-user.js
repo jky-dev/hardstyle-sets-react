@@ -49,7 +49,7 @@ const GetUser = () => {
 
   return (
     <div className="getUser">
-      <div className="getUserButton">
+      <div className="center-button">
         <Button
           className="user-button"
           variant="contained"

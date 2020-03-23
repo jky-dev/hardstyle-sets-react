@@ -3,6 +3,7 @@ import './app.css';
 import AddUser from './add-user';
 import GetUser from './get-user';
 import Login from './login';
+import Youtube from './youtube';
 import { auth } from './index';
 import {
   CssBaseline,
@@ -45,6 +46,7 @@ function App() {
           <div>
             <AddUser></AddUser>
             <GetUser></GetUser>
+            <Youtube></Youtube>
           </div>
         }
         <Login></Login>
