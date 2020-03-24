@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import './app.css';
-import AddUser from './add-user';
-import GetUser from './get-user';
 import Login from './login';
 import Youtube from './youtube';
 import { auth } from './index';
@@ -44,8 +42,6 @@ function App() {
         <h1>Hello {name ? name : 'World'}!</h1>
         {sessionStorage.getItem('user') &&
           <div>
-            <AddUser></AddUser>
-            <GetUser></GetUser>
             <Youtube></Youtube>
           </div>
         }
