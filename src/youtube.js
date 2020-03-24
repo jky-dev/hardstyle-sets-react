@@ -98,6 +98,15 @@ function Youtube() {
     setSelectedChannel(event.target.value);
   }
 
+  const testFunction = () => {
+    let re = /([0-9]{4}( \| )|( - ))/;
+    dbVideos.forEach(video => {
+      console.log('T: ', video.details.title);
+      const arr = video.details.title.split(re);
+      console.log('S: ', arr[arr.length-1]);
+    })
+  }
+
   return (
     <div>
       <div>
@@ -125,6 +134,11 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => handleFetchClick(channels[selectedChannel].channelId)}>Fetch YouTube Videos</Button>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="secondary"
+          onClick={() => testFunction()}>Test</Button>
       </div>
       <VideoList videos={dbVideos}></VideoList>
     </div>
