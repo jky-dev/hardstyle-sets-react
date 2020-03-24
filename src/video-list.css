@@ -3,5 +3,11 @@
 }
 
 .grid-div {
-  margin: 1rem;
+  padding: 8px -8px;
+  overflow-x: hidden;
+  overflow: hidden;
+}
+
+.empty-div {
+  height: 16px;
 }

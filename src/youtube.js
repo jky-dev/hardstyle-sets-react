@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
 } from '@material-ui/core';
@@ -100,34 +99,31 @@ function Youtube() {
 
   return (
     <div>
-      <div className="center-button">
+      <div>
         <div>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="primary"
-            onClick={() => handleFetchClick(channels[selectedChannel].channelId)}>Fetch YouTube Videos</Button>
+          <FormControl>
+            <Select
+              value={selectedChannel}
+              onChange={handleSelectChange}
+            >
+              {
+                Object.keys(channels).map(key => (
+                  <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+                ))
+              }
+            </Select>
+          </FormControl>
         </div>
-        <FormControl>
-          <InputLabel>Channel</InputLabel>
-          <Select
-            value={selectedChannel}
-            onChange={handleSelectChange}
-          >
-            {
-              Object.keys(channels).map(key => (
-                <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-              ))
-            }
-          </Select>
-        </FormControl>
-        <div>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="primary"
-            onClick={() => getVidsFromDB(channels[selectedChannel].title)}>Get Vids From DB</Button>
-        </div>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="primary"
+          onClick={() => getVidsFromDB(channels[selectedChannel].title)}>Get Vids From DB</Button>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="secondary"
+          onClick={() => handleFetchClick(channels[selectedChannel].channelId)}>Fetch YouTube Videos</Button>
       </div>
       <VideoList videos={dbVideos}></VideoList>
     </div>

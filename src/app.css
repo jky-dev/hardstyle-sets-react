@@ -1,13 +1,14 @@
 .App {
   max-width: 800px;
   margin: auto;
+  padding: 1rem;
 }
 
-h1, .center-button {
+h1 {
   text-align: center;
 }
 
 .MuiFormControl-root, .user-button {
   width: 200px;
-  margin-bottom: 1rem !important;
+  margin: 0 1rem 1rem 0 !important;
 }

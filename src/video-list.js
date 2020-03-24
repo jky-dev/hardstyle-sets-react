@@ -12,8 +12,8 @@ function VideoList(props) {
       <Grid
         container
         direction="row"
-        justify="space-evenly"
-        alignItems="flex-start"
+        justify="flex-start"
+        alignItems="stretch"
         spacing={2}
       >
         {props.videos.map(video =>
@@ -31,6 +31,7 @@ function VideoList(props) {
           </Grid>
         )}
       </Grid>
+      <div className="empty-div"></div>
     </div>
   )
 }
