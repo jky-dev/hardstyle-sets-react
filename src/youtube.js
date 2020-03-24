@@ -1,22 +1,48 @@
-import React from 'react';
-import { Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from '@material-ui/core';
 import { database } from './index';
+import VideoList from './video-list';
 
 function Youtube() {
-  let baseUrl = "https://www.googleapis.com/youtube/v3/";
+  const baseUrl = "https://www.googleapis.com/youtube/v3/";
   const api_key = process.env.REACT_APP_YT_KEY;
   let videos = [];
+  const [selectedChannel, setSelectedChannel] = useState('b2s');
+  const [dbVideos, setDbVideos] = useState([]);
+  const channels = {
+    b2s: {
+      title: 'B2S',
+      channelId: 'UCVLolPmtm4IPMHx5k0GISHg',
+    },
+    art_of_dance: {
+      title: 'Art of Dance',
+      channelId: 'UCWA006v5cHRVqJvwlzRxuHg',
+    },
+    q_dance: {
+      title: 'Q-dance',
+      channelId: 'UCAEwCfBRlB3jIY9whEfSP5Q',
+    },
+    bass_events: {
+      title: 'Bass Events',
+      channelId: 'UCGgQpBr1shI3IL4pVZ9Cplg',
+    }
+  };
 
-  const getVideosForChannel = (id, pageToken) => {
-    let nextPage;
+  const getVidsForChannelFromYoutube = (id, pageToken) => {
     const page = pageToken ? '&pageToken=' + pageToken : '';
-    fetch(baseUrl + "search?part=snippet%2Cid&channelId=" + id + "&maxResults=50&order=date&type=video&key=" + api_key + page)
+
+    fetch(baseUrl + "search?part=snippet%2Cid&channelId=" + id + "&maxResults=50&order=date&type=video&videoDuration=long&key=" + api_key + page)
       .then(res => res.json())
       .then(result => {
-        nextPage = result.nextPageToken;
+        const nextPage = result.nextPageToken;
         console.log('NextPg: ', nextPage);
-        const items = result.items;
-        items.forEach(video => {
+
+        result.items && result.items.forEach(video => {
           var videoObj = {
             id: video.id.videoId,
             details: video.snippet,
@@ -24,9 +50,10 @@ function Youtube() {
           console.log('Adding: ', video.id.videoId);
           videos.push(videoObj);
         });
+        
         if (nextPage) {
           console.log('Going next page ', nextPage);
-          getVideosForChannel(id, nextPage);
+          getVidsForChannelFromYoutube(id, nextPage);
         } else {
           addVideosToDB();
         };
@@ -48,6 +75,29 @@ function Youtube() {
       .catch(err => console.log(err));
   }
 
+  const getVidsFromDB = channelName => {
+    var tempVideos = [];
+    database.ref().child('/videos/' + channelName).on('value', snapshot => {
+      snapshot.forEach(video => {
+        const tempVideo = {
+          id: video.key,
+          details: video.val(),
+        };
+        tempVideos.push(tempVideo);
+      });
+      setDbVideos(tempVideos);
+    });
+  }
+
+  const handleFetchClick = (channelId) => {
+    videos = [];
+    getVidsForChannelFromYoutube(channelId);
+  }
+
+  const handleSelectChange = event => {
+    setSelectedChannel(event.target.value);
+  }
+
   return (
     <div>
       <div className="center-button">
@@ -56,42 +106,30 @@ function Youtube() {
             className="user-button"
             variant="contained"
             color="primary"
-            onClick={() => {
-              videos = [];
-              getVideosForChannel('UCGgQpBr1shI3IL4pVZ9Cplg');
-            }}>Get Bass Event Vids</Button>
+            onClick={() => handleFetchClick(channels[selectedChannel].channelId)}>Fetch YouTube Videos</Button>
         </div>
+        <FormControl>
+          <InputLabel>Channel</InputLabel>
+          <Select
+            value={selectedChannel}
+            onChange={handleSelectChange}
+          >
+            {
+              Object.keys(channels).map(key => (
+                <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+              ))
+            }
+          </Select>
+        </FormControl>
         <div>
           <Button
             className="user-button"
             variant="contained"
             color="primary"
-            onClick={() => {
-              videos = [];
-              getVideosForChannel('UCAEwCfBRlB3jIY9whEfSP5Q')
-            }}>Get Q-Dance Vids</Button>
-        </div>
-        <div>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              videos = [];
-              getVideosForChannel('UCVLolPmtm4IPMHx5k0GISHg')
-            }}>Get B2S Vids</Button>
-        </div>
-        <div>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              videos = [];
-              getVideosForChannel('UCWA006v5cHRVqJvwlzRxuHg')
-            }}>Get Art of Dance Vids</Button>
+            onClick={() => getVidsFromDB(channels[selectedChannel].title)}>Get Vids From DB</Button>
         </div>
       </div>
+      <VideoList videos={dbVideos}></VideoList>
     </div>
   )
 }
