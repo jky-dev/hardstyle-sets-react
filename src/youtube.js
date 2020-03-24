@@ -14,22 +14,22 @@ function Youtube() {
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [dbVideos, setDbVideos] = useState([]);
   const channels = {
-    b2s: {
-      title: 'B2S',
-      channelId: 'UCVLolPmtm4IPMHx5k0GISHg',
-    },
     art_of_dance: {
       title: 'Art of Dance',
       channelId: 'UCWA006v5cHRVqJvwlzRxuHg',
+    },
+    bass_events: {
+      title: 'Bass Events',
+      channelId: 'UCGgQpBr1shI3IL4pVZ9Cplg',
+    },
+    b2s: {
+      title: 'B2S',
+      channelId: 'UCVLolPmtm4IPMHx5k0GISHg',
     },
     q_dance: {
       title: 'Q-dance',
       channelId: 'UCAEwCfBRlB3jIY9whEfSP5Q',
     },
-    bass_events: {
-      title: 'Bass Events',
-      channelId: 'UCGgQpBr1shI3IL4pVZ9Cplg',
-    }
   };
 
   const getVidsForChannelFromYoutube = (id, pageToken) => {
@@ -76,15 +76,16 @@ function Youtube() {
 
   const getVidsFromDB = channelName => {
     var tempVideos = [];
-    database.ref().child('/videos/' + channelName).on('value', snapshot => {
+    database.ref().child('/videos/' + channelName).orderByChild('publishedAt').on('value', snapshot => {
       snapshot.forEach(video => {
         const tempVideo = {
           id: video.key,
           details: video.val(),
         };
         tempVideos.push(tempVideo);
+        console.log(tempVideo.details.publishedAt);
       });
-      setDbVideos(tempVideos);
+      setDbVideos(tempVideos.reverse());
     });
   }
 
