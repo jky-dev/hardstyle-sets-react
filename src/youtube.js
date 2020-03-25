@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button,
+import {
+  Box, 
+  Button,
   FormControl,
   MenuItem,
   Select,
@@ -8,12 +10,8 @@ import { database } from './index';
 import VideoList from './video-list';
 
 function Youtube() {
-  const baseUrl = "https://www.googleapis.com/youtube/v3/";
   const api_key = process.env.REACT_APP_YT_KEY;
-  let latestVideoId = '';
-  let fetchedVideos = [];
-  const [selectedChannel, setSelectedChannel] = useState('b2s');
-  const [dbVideos, setDbVideos] = useState([]);
+  const baseUrl = "https://www.googleapis.com/youtube/v3/";
   const channels = {
     art_of_dance: {
       title: 'Art of Dance',
@@ -32,6 +30,13 @@ function Youtube() {
       id: 'UCAEwCfBRlB3jIY9whEfSP5Q',
     },
   };
+
+  const [dbVideos, setDbVideos] = useState([]);
+  const [selectedChannel, setSelectedChannel] = useState('b2s');
+  const [showVids, setShowVids] = useState(false);
+
+  let fetchedVideos = [];
+  let latestVideoId = '';
 
   const getNewVidsFromYoutube = (channel, pageToken) => {
     const id = channels[channel].id;
@@ -73,9 +78,11 @@ function Youtube() {
     console.log('Adding all videos');
     let updates = {};
     console.log(fetchedVideos.length);
+
     fetchedVideos.forEach(video => {
       updates['/videos/' + video.details.channelTitle + '/' + video.id] = Object.assign({}, {setProps: getDefaultSetProps()}, video.details);
     });
+
     database.ref().update(updates)
       .then(() => {
         console.log('Added Vids Successfully');
@@ -105,15 +112,17 @@ function Youtube() {
   const getVidsFromDB = channel => {
     const channelName = channels[channel].title;
     var tempVideos = [];
+
     database.ref().child('/videos/' + channelName).orderByChild('publishedAt').on('value', snapshot => {
       snapshot.forEach(video => {
         const tempVideo = {
           id: video.key,
           details: video.val(),
         };
+
         tempVideos.push(tempVideo);
-        console.log(tempVideo.details.publishedAt);
       });
+
       setDbVideos(tempVideos.reverse());
     });
   }
@@ -123,6 +132,7 @@ function Youtube() {
     database.ref().child('/videos').once('value', channels => {
       let channelName;
       let channelObj = {};
+
       channels.forEach(channel => {
         channelName = channel.key;
         channelObj = {};
@@ -138,7 +148,10 @@ function Youtube() {
         obj[channelName] = channelObj;
       });
       database.ref().child('/videos').update(obj)
-        .then(console.log('Successfully updated videos with defaults'));
+        .then(() => {
+          console.log('Successfully updated videos with defaults')
+        })
+        .catch(err => console.log('Error updating videos with default', err));
     });
   }
 
@@ -159,16 +172,22 @@ function Youtube() {
   const handleFetchAllClick = channel => {
     fetchedVideos = [];
     latestVideoId = '';
+
     getNewVidsFromYoutube(channel);
   }
 
   const handleFetchNewClick = channel => {
     fetchedVideos = [];
+
     setLatestVidFromDB(channel);
   }
 
   const handleSelectChange = event => {
     setSelectedChannel(event.target.value);
+  }
+
+  const toggleShowVids = () => {
+    setShowVids(!showVids);
   }
 
   const testFunction = () => {
@@ -184,25 +203,37 @@ function Youtube() {
   return (
     <div>
       <div>
-        <div>
-          <FormControl>
-            <Select
-              value={selectedChannel}
-              onChange={handleSelectChange}
-            >
-              {
-                Object.keys(channels).map(key => (
-                  <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-                ))
-              }
-            </Select>
-          </FormControl>
-        </div>
+        <Box flexDirection="row" display="flex">
+          <Box>
+            <FormControl>
+              <Select
+                value={selectedChannel}
+                onChange={handleSelectChange}
+              >
+                {
+                  Object.keys(channels).map(key => (
+                    <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+                  ))
+                }
+              </Select>
+            </FormControl>
+          </Box>
+          <Box flexGrow={1}></Box>
+          <Box>Selected Channel: {selectedChannel}</Box>
+        </Box>
+        <h2>From Database</h2>
         <Button
           className="user-button"
           variant="contained"
           color="primary"
           onClick={() => getVidsFromDB(selectedChannel)}>Get Vids From DB</Button>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="secondary"
+          onClick={() => toggleShowVids()}>{showVids ? 'Hide' : 'Show'} Videos</Button>
+        <VideoList videos={dbVideos} show={showVids}></VideoList>
+        <h2>From YouTube</h2>
         <Button
           className="user-button"
           variant="contained"
@@ -213,13 +244,13 @@ function Youtube() {
           variant="outlined"
           color="secondary"
           onClick={() => handleFetchAllClick(selectedChannel)}>Fetch All Videos</Button>
+        <h2>Testing</h2>
         <Button
           className="user-button"
           variant="contained"
           color="secondary"
           onClick={() => testFunction()}>Test</Button>
       </div>
-      <VideoList videos={dbVideos}></VideoList>
     </div>
   )
 }

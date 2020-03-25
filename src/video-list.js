@@ -9,29 +9,34 @@ import './video-list.css';
 function VideoList(props) {
   return (
     <div className="grid-div">
-      <Grid
-        container
-        direction="row"
-        justify="flex-start"
-        alignItems="stretch"
-        spacing={2}
-      >
-        {props.videos.map(video =>
-          <Grid item key={video.id}>
-            <Card>
-              <CardHeader 
-                title={video.details.title}
-              />
-              <CardContent>
-                {video.details.title}
-                <br />
-                {video.details.description}
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
-      </Grid>
-      <div className="empty-div"></div>
+      { props.show
+        ? <div>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="stretch"
+              spacing={2}
+            >
+              {props.videos.map(video =>
+                <Grid item key={video.id}>
+                  <Card>
+                    <CardHeader 
+                      title={video.details.title}
+                    />
+                    <CardContent>
+                      {video.details.title}
+                      <br />
+                      {video.details.description}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              )}
+            </Grid>
+            <div className="empty-div"></div>
+          </div>
+        : <div></div>
+    }
     </div>
   )
 }
