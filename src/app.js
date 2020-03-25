@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './app.css';
-import Login from './login';
 import Youtube from './youtube';
 import { auth } from './index';
 import {
@@ -40,12 +39,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <h1>Hello {name ? name : 'World'}!</h1>
-        {sessionStorage.getItem('user') &&
-          <div>
-            <Youtube></Youtube>
-          </div>
-        }
-        <Login></Login>
+        <Youtube></Youtube>
       </ThemeProvider>
     </div>
   );

@@ -7,6 +7,7 @@ import {
   Select,
 } from '@material-ui/core';
 import { database } from './index';
+import Login from './login';
 import VideoList from './video-list';
 
 function Youtube() {
@@ -219,7 +220,7 @@ function Youtube() {
             </FormControl>
           </Box>
           <Box flexGrow={1}></Box>
-          <Box>Selected Channel: {selectedChannel}</Box>
+          <Box><Login></Login></Box>
         </Box>
         <h2>From Database</h2>
         <Button
@@ -233,23 +234,27 @@ function Youtube() {
           color="secondary"
           onClick={() => toggleShowVids()}>{showVids ? 'Hide' : 'Show'} Videos</Button>
         <VideoList videos={dbVideos} show={showVids}></VideoList>
-        <h2>From YouTube</h2>
-        <Button
-          className="user-button"
-          variant="contained"
-          color="secondary"
-          onClick={() => handleFetchNewClick(selectedChannel)}>Fetch New Videos</Button>
-        <Button
-          className="user-button"
-          variant="outlined"
-          color="secondary"
-          onClick={() => handleFetchAllClick(selectedChannel)}>Fetch All Videos</Button>
-        <h2>Testing</h2>
-        <Button
-          className="user-button"
-          variant="contained"
-          color="secondary"
-          onClick={() => testFunction()}>Test</Button>
+        {sessionStorage.getItem('user') &&
+          <div>
+            <h2>From YouTube</h2>
+            <Button
+              className="user-button"
+              variant="contained"
+              color="secondary"
+              onClick={() => handleFetchNewClick(selectedChannel)}>Fetch New Videos</Button>
+            <Button
+              className="user-button"
+              variant="outlined"
+              color="secondary"
+              onClick={() => handleFetchAllClick(selectedChannel)}>Fetch All Videos</Button>
+            <h2>Testing</h2>
+            <Button
+              className="user-button"
+              variant="contained"
+              color="secondary"
+              onClick={() => testFunction()}>Test</Button>
+          </div>
+        }
       </div>
     </div>
   )
