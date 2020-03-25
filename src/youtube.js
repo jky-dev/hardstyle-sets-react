@@ -11,7 +11,7 @@ function Youtube() {
   const baseUrl = "https://www.googleapis.com/youtube/v3/";
   const api_key = process.env.REACT_APP_YT_KEY;
   let latestVideoId = '';
-  let videos = [];
+  let fetchedVideos = [];
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [dbVideos, setDbVideos] = useState([]);
   const channels = {
@@ -54,7 +54,7 @@ function Youtube() {
             details: items[i].snippet,
           };
           console.log('Adding: ', items[i].id.videoId);
-          videos.push(videoObj);
+          fetchedVideos.push(videoObj);
         }
         
         if (result.nextPageToken && !upToDate) {
@@ -72,13 +72,16 @@ function Youtube() {
   const addVideosToDB = () => {
     console.log('Adding all videos');
     let updates = {};
-    console.log(videos.length);
-    videos.forEach(video => {
-      updates['/videos/' + video.details.channelTitle + '/' + video.id] = video.details;
-      console.log(video.details);
+    console.log(fetchedVideos.length);
+    fetchedVideos.forEach(video => {
+      updates['/videos/' + video.details.channelTitle + '/' + video.id] = Object.assign({}, {setProps: getDefaultSetProps()}, video.details);
     });
     database.ref().update(updates)
-      .then()
+      .then(() => {
+        console.log('Added Vids Successfully');
+        console.log('Updating defaults');
+        updateAllVidsWithDefaults();
+      })
       .catch(err => console.log(err));
   }
 
@@ -115,14 +118,52 @@ function Youtube() {
     });
   }
 
+  const updateAllVidsWithDefaults = () => {
+    let obj = {};
+    database.ref().child('/videos').once('value', channels => {
+      let channelName;
+      let channelObj = {};
+      channels.forEach(channel => {
+        channelName = channel.key;
+        channelObj = {};
+
+        channel.forEach(video => {
+          if (!video.val().setProps) {
+            channelObj[video.key] = Object.assign({}, {setProps: getDefaultSetProps()}, video.val());
+          } else {
+            channelObj[video.key] = video.val();
+          }
+        });
+
+        obj[channelName] = channelObj;
+      });
+      database.ref().child('/videos').update(obj)
+        .then(console.log('Successfully updated videos with defaults'));
+    });
+  }
+
+  const getDefaultSetProps = () => {
+    return {
+      isVerified: false,
+      isLive: false,
+      isSet: false,
+      festival: '',
+      year: '',
+      artists: {
+        1: ''
+      },
+      setName: '',
+    }
+  }
+
   const handleFetchAllClick = channel => {
-    videos = [];
+    fetchedVideos = [];
     latestVideoId = '';
     getNewVidsFromYoutube(channel);
   }
 
   const handleFetchNewClick = channel => {
-    videos = [];
+    fetchedVideos = [];
     setLatestVidFromDB(channel);
   }
 
@@ -131,12 +172,13 @@ function Youtube() {
   }
 
   const testFunction = () => {
-    let re = /([0-9]{4}( \| )|( - ))/;
-    dbVideos.forEach(video => {
-      console.log('T: ', video.details.title);
-      const arr = video.details.title.split(re);
-      console.log('S: ', arr[arr.length-1]);
-    })
+    // let re = /([0-9]{4}( \| )|( - ))/;
+    // dbVideos.forEach(video => {
+    //   console.log('T: ', video.details.title);
+    //   const arr = video.details.title.split(re);
+    //   console.log('S: ', arr[arr.length-1]);
+    // })
+    updateAllVidsWithDefaults();
   }
 
   return (
@@ -165,12 +207,17 @@ function Youtube() {
           className="user-button"
           variant="contained"
           color="secondary"
+          onClick={() => handleFetchNewClick(selectedChannel)}>Fetch New Videos</Button>
+        <Button
+          className="user-button"
+          variant="outlined"
+          color="secondary"
           onClick={() => handleFetchAllClick(selectedChannel)}>Fetch All Videos</Button>
         <Button
           className="user-button"
           variant="contained"
           color="secondary"
-          onClick={() => handleFetchNewClick(selectedChannel)}>Fetch New Videos</Button>
+          onClick={() => testFunction()}>Test</Button>
       </div>
       <VideoList videos={dbVideos}></VideoList>
     </div>
