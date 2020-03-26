@@ -117,7 +117,6 @@ function Youtube() {
     var tempVideos = [];
 
     database.ref().child('/videos/' + channelName).orderByChild('publishedAt').on('value', snapshot => {
-      let map = new Map();
       snapshot.forEach(video => {
         const tempVideo = {
           id: video.key,
@@ -125,14 +124,7 @@ function Youtube() {
         };
         tempVideos.push(tempVideo);
       });
-      for (let i = tempVideos.length - 1; i >= 0; i--) {
-        map.set(tempVideos[i].id, tempVideos[i].details);
-      }
-      console.log(map);
-      map.forEach((value, key, map) => {
-        console.log(value, key, map);
-      })
-      setDbVideos(map);
+      setDbVideos(tempVideos.reverse());
     });
   }
 
@@ -200,7 +192,7 @@ function Youtube() {
   }
   
   const toggleEditVids = () => {
-    setEditVids(!editVids);
+    dbVideos && setEditVids(!editVids);
   }
 
   const testFunction = () => {
