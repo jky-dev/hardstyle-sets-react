@@ -7,6 +7,7 @@ import {
   Select,
 } from '@material-ui/core';
 import { database } from './index';
+import EditList from './edit-list';
 import Login from './login';
 import VideoList from './video-list';
 
@@ -33,6 +34,7 @@ function Youtube() {
   };
 
   const [dbVideos, setDbVideos] = useState([]);
+  const [editVids, setEditVids] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [showVids, setShowVids] = useState(false);
 
@@ -188,7 +190,11 @@ function Youtube() {
   }
 
   const toggleShowVids = () => {
-    setShowVids(!showVids);
+    dbVideos.length > 0 && setShowVids(!showVids);
+  }
+  
+  const toggleEditVids = () => {
+    dbVideos.length > 0 && setEditVids(!showVids);
   }
 
   const testFunction = () => {
@@ -233,7 +239,13 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{showVids ? 'Hide' : 'Show'} Videos</Button>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="secondary"
+          onClick={() => toggleEditVids()}>Edit Videos</Button>
         <VideoList videos={dbVideos} show={showVids}></VideoList>
+        <EditList videos={dbVideos} show={editVids}></EditList>
         {sessionStorage.getItem('user') &&
           <div>
             <h2>From YouTube</h2>

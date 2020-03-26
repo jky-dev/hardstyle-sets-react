@@ -1,0 +1,13 @@
+.MuiCard-root {
+  width: 350px;
+}
+
+.grid-div {
+  padding: 8px -8px;
+  overflow-x: hidden;
+  overflow: hidden;
+}
+
+.empty-div {
+  height: 16px;
+}
