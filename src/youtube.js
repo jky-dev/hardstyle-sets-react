@@ -33,7 +33,7 @@ function Youtube() {
     },
   };
 
-  const [dbVideos, setDbVideos] = useState([]);
+  const [dbVideos, setDbVideos] = useState(null);
   const [editVids, setEditVids] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [showVids, setShowVids] = useState(false);
@@ -117,16 +117,22 @@ function Youtube() {
     var tempVideos = [];
 
     database.ref().child('/videos/' + channelName).orderByChild('publishedAt').on('value', snapshot => {
+      let map = new Map();
       snapshot.forEach(video => {
         const tempVideo = {
           id: video.key,
           details: video.val(),
         };
-
         tempVideos.push(tempVideo);
       });
-
-      setDbVideos(tempVideos.reverse());
+      for (let i = tempVideos.length - 1; i >= 0; i--) {
+        map.set(tempVideos[i].id, tempVideos[i].details);
+      }
+      console.log(map);
+      map.forEach((value, key, map) => {
+        console.log(value, key, map);
+      })
+      setDbVideos(map);
     });
   }
 
@@ -190,11 +196,11 @@ function Youtube() {
   }
 
   const toggleShowVids = () => {
-    dbVideos.length > 0 && setShowVids(!showVids);
+    dbVideos && setShowVids(!showVids);
   }
   
   const toggleEditVids = () => {
-    dbVideos.length > 0 && setEditVids(!showVids);
+    setEditVids(!editVids);
   }
 
   const testFunction = () => {

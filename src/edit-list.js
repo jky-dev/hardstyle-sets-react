@@ -10,28 +10,42 @@ import {
   Grid,
   TextField,
 } from '@material-ui/core';
-import './video-list.css';
+import './edit-list.css';
 
 function EditList(props) {
+  // const [map, setMap] = React.useState(props.videos);
+  const map = props.videos;
+  const [tempValue, setTempValue] = React.useState('');
   const [editing, setEditing] = React.useState({
     enabled: false,
     id: '',
   });
-
-  const handleChange = (event, id, video) => {
+  // TODO: each video is its own component - so that only that component
+  // is rerendered when we edit it 
+  // we can just use arrays instead of maps
+  const handleChange = (event, key) => {
     console.log(event.target);
     console.log(event.target.value);
     console.log(event.target.name);
-    console.log(id);
-    console.log(video);
+    console.log(key);
+    setTempValue(event.target.value);
+    // const newValue = {};
+    // newValue[event.target.name] = event.target.value;
+    // const newMapValue = Object.assign({}, map.get(key), { setProps: newValue });
+    // map.set(map.get(key), newMapValue);
   }
 
-  const handleEdit = (event, video) => {
+  const handleEdit = (event, key) => {
     console.log(event.target);
+    editing.enabled && updateVideo(key);
     setEditing({
-      editing: !editing.editing,
-      id: video.id,
+      enabled: !editing.enabled,
+      id: key,
     });
+  }
+
+  const updateVideo = (key) => {
+    console.log('update key', key);
   }
 
   return (
@@ -45,62 +59,72 @@ function EditList(props) {
               alignItems="stretch"
               spacing={2}
             >
-              {props.videos.map(video =>
-                <Grid item key={video.id}>
+              {
+                [...map.keys()].map(key =>
+                <Grid item key={key}>
                   <Card>
                     <CardContent>
-                    {video.details.title}
+                    <span className="key-title">
+                      {map.get(key).title}
+                    </span>
                     <br />
                     <FormControl>
                       <div>
                         <TextField
                           id="standard-basic"
                           label="Set Name"
-                          value={video.details.setProps.setName}
-                          disabled={!(editing.enabled && video.id === editing.id)} />
+                          name="setName"
+                          // value={map.get(key).setProps.setName}
+                          value={tempValue}
+                          disabled={!(editing.enabled && key === editing.id)}
+                          onChange={(e) => handleChange(e, key)} />
                       </div>
                       <div>
                         <TextField
                           id="standard-basic"
                           label="Festival"
-                          value={video.details.setProps.festival}
-                          disabled={!(editing.enabled && video.id === editing.id)} />
+                          name="festival"
+                          value={map.get(key).setProps.festival}
+                          disabled={!(editing.enabled && key === editing.id)}
+                          onChange={(e) => handleChange(e, key)} />
                       </div>
                       <div>
                         <TextField
                           id="standard-basic"
-                          label="Festival"
-                          value={video.details.setProps.festival}
-                          disabled={!(editing.enabled && video.id === editing.id)} />
+                          label="Year"
+                          name="year"
+                          value={map.get(key).setProps.year}
+                          disabled={!(editing.enabled && key === editing.id)}
+                          onChange={(e) => handleChange(e, key)} />
                       </div>
                       <FormGroup>
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={video.details.setProps.isSet}
-                            onChange={(e) => handleChange(e, video.id, video)}
+                            checked={map.get(key).setProps.isSet}
+                            onChange={(e) => handleChange(e, key)}
                             name="isSet"
-                            disabled={!(editing.enabled && video.id === editing.id)} />
+                            disabled={!(editing.enabled && key === editing.id)} />
                         }
                         label="Set?"
                       />
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={video.details.setProps.isLive}
-                            onChange={(e) => handleChange(e, video.id, video)}
+                            checked={map.get(key).setProps.isLive}
+                            onChange={(e) => handleChange(e, key)}
                             name="isLive"
-                            disabled={!(editing.enabled && video.id === editing.id)} />
+                            disabled={!(editing.enabled && key === editing.id)} />
                         }
                         label="Live?"
                       />
                       <FormControlLabel
                         control={
                           <Checkbox
-                            checked={video.details.setProps.isVerified}
-                            onChange={(e) => handleChange(e, video.id, video)}
+                            checked={map.get(key).setProps.isVerified}
+                            onChange={(e) => handleChange(e, key)}
                             name="isVerified"
-                            disabled={!(editing.enabled && video.id === editing.id)} />
+                            disabled={!(editing.enabled && key === editing.id)} />
                         }
                         label="Verified?"
                       />
@@ -108,9 +132,9 @@ function EditList(props) {
                     </FormControl>
                     <div>
                       <Button variant="outlined"
-                        onClick={(e) => handleEdit(e, video)}
-                        disabled={!(video.id === editing.id) && editing.enabled } >
-                        {editing.editing && video.id === editing.id
+                        onClick={(e) => handleEdit(e, key)}
+                        disabled={!(key === editing.id) && editing.enabled } >
+                        {editing.enabled && key === editing.id
                         ? 'Save'
                         : 'Edit'
                         }
