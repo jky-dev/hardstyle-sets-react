@@ -17,5 +17,5 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1; /* number of lines to show */
+  -webkit-line-clamp: 10; /* number of lines to show */
 }

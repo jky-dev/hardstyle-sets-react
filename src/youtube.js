@@ -13,6 +13,7 @@ import {
   Snackbar,
 } from '@material-ui/core';
 import { database } from './index';
+import BulkEditor from './bulk-editor';
 import EditList from './edit-list';
 import Login from './login';
 import VideoList from './video-list';
@@ -133,7 +134,7 @@ function Youtube() {
     const channelName = channels[channel].title;
     var tempVideos = [];
 
-    database.ref().child('/videos/' + channelName).orderByChild('publishedAt').on('value', snapshot => {
+    database.ref().child('/videos/' + channelName).orderByChild('publishedAt').once('value', snapshot => {
       snapshot.forEach(video => {
         const tempVideo = {
           id: video.key,
@@ -236,6 +237,10 @@ function Youtube() {
     setDialogIsOpen(false);
   }
 
+  const setVideos = (vids) => {
+    setDbVideos(vids);
+  }
+
   return (
     <div>
       <div>
@@ -257,6 +262,7 @@ function Youtube() {
           <Box flexGrow={1}></Box>
           <Box><Login></Login></Box>
         </Box>
+        <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
         <h2>From Database {dbVideos &&
           <span>
             - {dbVideos.length + ' videos loaded'}
