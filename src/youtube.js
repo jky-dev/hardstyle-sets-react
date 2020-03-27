@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import {
   Box, 
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   MenuItem,
   Select,
+  Snackbar,
 } from '@material-ui/core';
 import { database } from './index';
 import EditList from './edit-list';
@@ -33,10 +39,13 @@ function Youtube() {
     },
   };
 
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const [dbVideos, setDbVideos] = useState(null);
   const [editVids, setEditVids] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [showVids, setShowVids] = useState(false);
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   let fetchedVideos = [];
   let latestVideoId = '';
@@ -82,6 +91,12 @@ function Youtube() {
     let updates = {};
     console.log(fetchedVideos.length);
 
+    if (fetchedVideos.length === 0) {
+      setSnackbarMessage(`${channels[selectedChannel].title} is up to date`);
+      setSnackbarIsOpen(true);
+      return;
+    }
+
     fetchedVideos.forEach(video => {
       updates['/videos/' + video.details.channelTitle + '/' + video.id] = Object.assign({}, {setProps: getDefaultSetProps()}, video.details);
     });
@@ -91,6 +106,8 @@ function Youtube() {
         console.log('Added Vids Successfully');
         console.log('Updating defaults');
         updateAllVidsWithDefaults();
+        setSnackbarMessage(`Added ${fetchedVideos.length} videos for ${channels[selectedChannel].title}`);
+        setSnackbarIsOpen(true);
       })
       .catch(err => console.log(err));
   }
@@ -125,6 +142,8 @@ function Youtube() {
         tempVideos.push(tempVideo);
       });
       setDbVideos(tempVideos.reverse());
+      setSnackbarMessage(`Loaded ${tempVideos.length} videos from DB for ${channels[selectedChannel].title}`);
+      setSnackbarIsOpen(true);
     });
   }
 
@@ -202,7 +221,19 @@ function Youtube() {
     //   const arr = video.details.title.split(re);
     //   console.log('S: ', arr[arr.length-1]);
     // })
-    updateAllVidsWithDefaults();
+    // updateAllVidsWithDefaults();
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarIsOpen(false);
+  }
+
+  const handleDialogClose = (event, reason) => {
+    setDialogIsOpen(false);
   }
 
   return (
@@ -226,7 +257,11 @@ function Youtube() {
           <Box flexGrow={1}></Box>
           <Box><Login></Login></Box>
         </Box>
-        <h2>From Database</h2>
+        <h2>From Database {dbVideos &&
+          <span>
+            - {dbVideos.length + ' videos loaded'}
+          </span>
+        }</h2>
         <Button
           className="user-button"
           variant="contained"
@@ -256,7 +291,7 @@ function Youtube() {
               className="user-button"
               variant="outlined"
               color="secondary"
-              onClick={() => handleFetchAllClick(selectedChannel)}>Fetch All Videos</Button>
+              onClick={() => setDialogIsOpen(true)}>Fetch All Videos</Button>
             <h2>Testing</h2>
             <Button
               className="user-button"
@@ -265,6 +300,30 @@ function Youtube() {
               onClick={() => testFunction()}>Test</Button>
           </div>
         }
+        <Snackbar
+          autoHideDuration={5000}
+          message={snackbarMessage}
+          open={snackbarIsOpen}
+          onClose={handleSnackbarClose} />
+        <Dialog onClose={handleDialogClose} open={dialogIsOpen}>
+          <DialogTitle>Are you sure you want to fetch all videos?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Fetching all videos will overwrite any existing video data with the new fetched data.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose}>No</Button>
+            <Button
+              onClick={() => {
+                handleDialogClose();
+                handleFetchAllClick(selectedChannel);
+              }}
+              variant="contained"
+              color="secondary"
+              >Yes</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   )
