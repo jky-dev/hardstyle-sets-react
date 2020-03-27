@@ -205,6 +205,7 @@ function Youtube() {
 
   const handleSelectChange = event => {
     setSelectedChannel(event.target.value);
+    getVidsFromDB(event.target.value);
   }
 
   const toggleShowVids = () => {
@@ -262,7 +263,9 @@ function Youtube() {
           <Box flexGrow={1}></Box>
           <Box><Login></Login></Box>
         </Box>
-        <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
+        {sessionStorage.getItem('user') &&
+          <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
+        }
         <h2>From Database {dbVideos &&
           <span>
             - {dbVideos.length + ' videos loaded'}

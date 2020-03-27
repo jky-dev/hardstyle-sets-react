@@ -62,7 +62,7 @@ function BulkEditor(props) {
   }
 
   const checkIsSet = () => {
-    const notSetKeywords = [/mix/, /warm(ing)?[ -]?up/, /end\ ?show/, /movie/, /re[- ]?cap/];
+    const notSetKeywords = [/mix/, /warm(ing)?[ -]?up/, /end ?show/, /movie/, /re[- ]?cap/];
     let count = 0;
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
