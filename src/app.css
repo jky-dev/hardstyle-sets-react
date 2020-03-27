@@ -9,6 +9,6 @@ h1 {
 }
 
 .MuiFormControl-root, .user-button {
-  width: 200px;
+  /* width: 200px; */
   margin: 0 1rem 1rem 0 !important;
 }

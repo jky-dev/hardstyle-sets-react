@@ -138,6 +138,7 @@ function BulkEditor(props) {
         value={replace}
       />
       <Button
+        className="user-button"
         variant="contained"
         color="primary"
         onClick={() => doReplace()}>
@@ -145,18 +146,21 @@ function BulkEditor(props) {
       </Button>
       <h2>Auto Stuff</h2>
       <Button
+        className="user-button"
         variant="contained"
         color="primary"
         onClick={() => setYear()}>
         Set year
       </Button>
       <Button
+        className="user-button"
         variant="contained"
         color="primary"
         onClick={() => checkIsSet()}>
         Set isSet
       </Button>
       <Button
+        className="user-button"
         variant="outlined"
         color="secondary"
         onClick={() => updateDb()}>
