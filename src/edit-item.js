@@ -9,17 +9,19 @@ import {
   Button,
   Checkbox,
 } from '@material-ui/core';
+import { database } from './index';
 
 function EditItem(props) {
   const [editing, setEditing] = React.useState(false);
   const [video, setVideo] = React.useState(props.video);
 
-  //TODO: fix checkbox and update to DB
   const handleChange = (event, video) => {
-    const {name, checked, value} = event.target;
-    console.log(name, checked, value);
-    console.log(video);
-    video.details.setProps[name] = value;
+    const {name, checked, value, type} = event.target;
+    if (type === 'checkbox') {
+      video.details.setProps[name] = checked;
+    } else {
+      video.details.setProps[name] = value;
+    }
     setVideo({...video, video});
   }
 
@@ -29,7 +31,10 @@ function EditItem(props) {
   }
 
   const updateVideo = (video) => {
-    console.log('update key', video);
+    console.log('update key', video.id, 'with', video.details);
+    let updateObj = {};
+    updateObj[video.id] = video.details;
+    database.ref().child('/videos/' + video.details.channelTitle).update(updateObj);
   }
 
   return (
