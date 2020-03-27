@@ -51,6 +51,10 @@ function Youtube() {
   let fetchedVideos = [];
   let latestVideoId = '';
 
+  const isLoggedIn = () => {
+    return sessionStorage.getItem('user');
+  }
+
   const getNewVidsFromYoutube = (channel, pageToken) => {
     const id = channels[channel].id;
     const page = pageToken ? '&pageToken=' + pageToken : '';
@@ -143,7 +147,7 @@ function Youtube() {
         tempVideos.push(tempVideo);
       });
       setDbVideos(tempVideos.reverse());
-      setSnackbarMessage(`Loaded ${tempVideos.length} videos from DB for ${channels[selectedChannel].title}`);
+      setSnackbarMessage(`Loaded ${tempVideos.length} videos from DB for ${channels[channel].title}`);
       setSnackbarIsOpen(true);
     });
   }
@@ -263,7 +267,7 @@ function Youtube() {
           <Box flexGrow={1}></Box>
           <Box><Login></Login></Box>
         </Box>
-        {sessionStorage.getItem('user') &&
+        {isLoggedIn() &&
           <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
         }
         <h2>From Database {dbVideos &&
@@ -281,14 +285,14 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{showVids ? 'Hide' : 'Show'} Videos</Button>
-        <Button
+        {isLoggedIn() && <Button
           className="user-button"
           variant="contained"
           color="secondary"
-          onClick={() => toggleEditVids()}>Edit Videos</Button>
+          onClick={() => toggleEditVids()}>Edit Videos</Button>}
         <VideoList videos={dbVideos} show={showVids}></VideoList>
         <EditList videos={dbVideos} show={editVids}></EditList>
-        {sessionStorage.getItem('user') &&
+        {isLoggedIn() &&
           <div>
             <h2>From YouTube</h2>
             <Button

@@ -12,7 +12,6 @@ import {
 import { database } from './index';
 
 function EditItem(props) {
-  const [editing, setEditing] = React.useState(false);
   const [video, setVideo] = React.useState(props.video);
 
   const handleChange = (event, video) => {
@@ -25,9 +24,8 @@ function EditItem(props) {
     setVideo({...video, video});
   }
 
-  const handleEdit = (event, video) => {
-    editing && updateVideo(video);
-    setEditing(!editing);
+  const saveVideo = (event, video) => {
+    updateVideo(video);
   }
 
   const updateVideo = (video) => {
@@ -50,7 +48,6 @@ function EditItem(props) {
             label="Set Name"
             name="setName"
             value={video.details.setProps.setName}
-            disabled={!editing}
             onChange={(e) => handleChange(e, video)} />
         </div>
         <div>
@@ -58,7 +55,6 @@ function EditItem(props) {
             label="Festival"
             name="festival"
             value={video.details.setProps.festival}
-            disabled={!editing}
             onChange={(e) => handleChange(e, video)} />
         </div>
         <div>
@@ -66,7 +62,6 @@ function EditItem(props) {
             label="Year"
             name="year"
             value={video.details.setProps.year}
-            disabled={!editing}
             onChange={(e) => handleChange(e, video)} />
         </div>
         <FormGroup>
@@ -75,8 +70,7 @@ function EditItem(props) {
             <Checkbox
               checked={video.details.setProps.isSet}
               onChange={(e) => handleChange(e, video)}
-              name="isSet"
-              disabled={!editing} />
+              name="isSet" />
           }
           label="Set?"
         />
@@ -85,8 +79,7 @@ function EditItem(props) {
             <Checkbox
               checked={video.details.setProps.isLive}
               onChange={(e) => handleChange(e, video)}
-              name="isLive"
-              disabled={!editing} />
+              name="isLive" />
           }
           label="Live?"
         />
@@ -95,8 +88,7 @@ function EditItem(props) {
             <Checkbox
               checked={video.details.setProps.isVerified}
               onChange={(e) => handleChange(e, video)}
-              name="isVerified"
-              disabled={!editing} />
+              name="isVerified" />
           }
           label="Verified?"
         />
@@ -104,12 +96,8 @@ function EditItem(props) {
       </FormControl>
       <div>
         <Button variant="outlined"
-          onClick={(e) => handleEdit(e, video)}
-          disabled={!(video.id === editing.id) && editing.enabled } >
-          {editing.enabled
-          ? 'Save'
-          : 'Edit'
-          }
+          onClick={(e) => saveVideo(e, video)} >
+          Save
         </Button>
       </div>
       </CardContent>
