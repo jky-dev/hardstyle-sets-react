@@ -40,6 +40,25 @@ function BulkEditor(props) {
     updateVideos();
   }
 
+  const setFestival = () => {
+    const festivals = [/def[- ]?qon/i, /reverze/i, /hard[- ]?bass/i, /decibel/i];
+
+    checkVideos() && videos.forEach(video => {
+      if (video.details.setProps.isVerified) {
+        return;
+      }
+
+      for (let i = 0; i < festivals.length; i++) {
+        const matches = video.details.title.match(festivals[i]);
+
+        if (matches) {
+          video.details.setProps.festival = matches[0];
+          console.log(matches[0]);
+        }
+      }
+    })
+  }
+
   const setYear = () => {
     let count = 0;
     let title;
@@ -62,7 +81,7 @@ function BulkEditor(props) {
   }
 
   const checkIsSet = () => {
-    const notSetKeywords = [/mix/, /warm(ing)?[ -]?up/, /end ?show/, /movie/, /re[- ]?cap/];
+    const notSetKeywords = [/mix/i, /warm(ing)?[ -]?up/i, /end ?show/i, /movie/i, /re[- ]?cap/i];
     let count = 0;
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
@@ -71,7 +90,7 @@ function BulkEditor(props) {
 
       video.details.setProps.isSet = true;
       for (let i = 0; i < notSetKeywords.length; i++) {
-        if (video.details.title.toLowerCase().match(notSetKeywords[i])) {
+        if (video.details.title.match(notSetKeywords[i])) {
           console.log(video.details.title, notSetKeywords[i]);
           video.details.setProps.isSet = false;
           count++;
@@ -145,6 +164,13 @@ function BulkEditor(props) {
         Replace
       </Button>
       <h2>Auto Stuff</h2>
+      <Button
+        className="user-button"
+        variant="contained"
+        color="primary"
+        onClick={() => setFestival()}>
+        Set festival
+      </Button>
       <Button
         className="user-button"
         variant="contained"
