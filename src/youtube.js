@@ -42,6 +42,7 @@ function Youtube() {
 
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const [dbVideos, setDbVideos] = useState(null);
+  const [isSetAndVerifiedVideos, setSetAndVerifiedVideos] = useState(null);
   const [editVids, setEditVids] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState('b2s');
   const [showVids, setShowVids] = useState(false);
@@ -141,6 +142,7 @@ function Youtube() {
   const getVidsFromDB = channel => {
     const channelName = channels[channel].title;
     var tempVideos = [];
+    var tempSetAndVerified = [];
 
     database.ref().child('/videos/' + channelName).orderByChild('publishedAt').once('value', snapshot => {
       snapshot.forEach(video => {
@@ -149,9 +151,13 @@ function Youtube() {
           details: video.val(),
         };
         tempVideos.push(tempVideo);
+        if (video.val().setProps.isSet && video.val().setProps.isVerified) {
+          tempSetAndVerified.push(tempVideo);
+        }
       });
       setDbVideos(tempVideos.reverse());
-      setSnackbarMessage(`Loaded ${tempVideos.length} videos from DB for ${channels[channel].title}`);
+      setSetAndVerifiedVideos(tempSetAndVerified.reverse());
+      setSnackbarMessage(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
       setSnackbarIsOpen(true);
     });
   }
@@ -292,7 +298,7 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleEditVids()}>Edit Videos</Button>}
-        <VideoList videos={dbVideos} show={showVids}></VideoList>
+        <VideoList videos={isSetAndVerifiedVideos} show={showVids}></VideoList>
         <EditList videos={dbVideos} show={editVids}></EditList>
         {isLoggedIn() &&
           <div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card,
-  CardHeader,
+  Fade,
   Grid,
   CardContent,
   Typography,
@@ -21,20 +21,22 @@ function VideoList(props) {
               spacing={2}
             >
               {props.videos.map(video =>
-                (video.details.setProps.isSet && <Grid item key={video.id}>
-                  <Card>
-                    <CardContent>
-                      <Typography>
-                        {video.details.setProps.festival} {video.details.setProps.year}
-                        <br />
-                        <span className="set-name">{video.details.setProps.setName}</span>
-                        <br />
-                      </Typography>
-                      <img onClick={() => {window.open(youtubeUrl + video.id, '_blank')}} src={video.details.thumbnails.medium.url} />
-                    </CardContent>
-                  </Card>
+                <Grid item key={video.id}>
+                  <Fade in={true}>
+                    <Card>
+                      <CardContent>
+                        <Typography>
+                          {video.details.setProps.festival} {video.details.setProps.year}
+                          <br />
+                          <span className="set-name">{video.details.setProps.setName}</span>
+                          <br />
+                        </Typography>
+                        <img onClick={() => {window.open(youtubeUrl + video.id, '_blank')}} src={video.details.thumbnails.medium.url} />
+                      </CardContent>
+                    </Card>
+                  </Fade>
                 </Grid>
-              ))}
+              )}
             </Grid>
             <div className="empty-div"></div>
           </div>
