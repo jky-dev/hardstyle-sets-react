@@ -21,24 +21,21 @@ function BulkEditor(props) {
         return;
       }
 
-      title = video.details.title;
-      title = title.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
-      desc = video.details.description;
-      if (find && replace && title.includes(find)) {
-        console.log('Before:', title);
-        title = title.replace(new RegExp(find, 'g'), replace);
-        console.log('After:', title);
-      }
-      video.details.title = title;
+      title = video.details.title.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
+      desc = video.details.description.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
 
-      desc = desc.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
-      if (find && replace && desc.includes(find)) {
-        console.log('Before:', desc);
-        desc = desc.replace(new RegExp(find, 'g'), replace);
-        console.log('After:', desc);
+      if (find && replace && title.includes(find)) {
+        title = title.replace(new RegExp(find, 'g'), replace);
       }
+
+      if (find && replace && desc.includes(find)) {
+        desc = desc.replace(new RegExp(find, 'g'), replace);
+      }
+
+      video.details.title = title;
       video.details.description = desc;
     });
+
     updateVideos();
   }
 
@@ -48,6 +45,7 @@ function BulkEditor(props) {
     setName();
     setYear();
     checkIsSet();
+    updateVideos();
   }
 
   const setFestival = () => {
@@ -63,6 +61,11 @@ function BulkEditor(props) {
       /qlimax/i,
       /x-qlusive holland/i,
       /impaqt/i,
+      /qapital/i,
+      /x-qlusive da tweekaz/i,
+      /q-base/i,
+      /mysteryland/i,
+      /x-qlusive frequencerz/i,
     ];
 
     checkVideos() && videos.forEach(video => {
@@ -78,12 +81,35 @@ function BulkEditor(props) {
           console.log(matches[0]);
         }
       }
-    })
+    });
+
+    updateVideos();
   }
 
   const setName = () => {
     const names = [/team [a-z]+ /i,];
     let title;
+
+    // for getting set names per event
+    const splits = [
+      / @ /,
+      / \| DEDIQATED /,
+      / \| EPIQ/,
+      / \| Qlimax/,
+      / \| X-Qlusive Holland/,
+      / \| IMPAQT/,
+      / \| Defqon.1 2019/,
+      /Defqon.1 2018 \| /,
+      /Defqon.1 Weekend Festival 201[5-7] \| /,
+      /Q-BASE 201[6-9] \| /,
+      /QAPITAL 201[8-9] \| /,
+      /Reverze 2020 \| /,
+      /Qlimax 201[8-9] \| /,
+      /X-Qlusive Da Tweekaz 2019 \| /,
+      /X-Qlusive Holland XXL 2018 \| /,
+      /X-Qlusive Frequencerz 2018 \| /,
+    ];
+
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
         return;
@@ -92,33 +118,31 @@ function BulkEditor(props) {
       title = video.details.title;
       for (let i = 0; i < names.length; i++) {
         if (video.details.title.match(names[i])) {
-          console.log(video.details.title, names[i]);
           video.details.setProps.setName = video.details.title.match(names[i])[0];
           break;
         }
       }
-      // for getting set names per event
-      const splits = [
-        / @ /,
-        / \| DEDIQATED /,
-        / \| EPIQ/,
-        / \| Qlimax/,
-        / \| X-Qlusive Holland/,
-        / \| IMPAQT/,
-        / \| Defqon.1/,
-      ];
+
       for (let i = 0; i < splits.length; i++) {
         if (title.match(splits[i])) {
-          video.details.setProps.setName = title.split(splits[i])[0];
+          const splitArray = title.split(splits[i]);
+          if (splitArray[0]) {
+            video.details.setProps.setName = splitArray[0];
+          } else {
+            video.details.setProps.setName = splitArray[1];
+          }
+          break;
         }
       }
     });
+
+    updateVideos();
   }
 
   const setYear = () => {
-    let count = 0;
     let title;
     const re = /[0-9]{4}/;
+
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
         return;
@@ -126,9 +150,9 @@ function BulkEditor(props) {
 
       title = video.details.title;
       const match = title.match(re);
+
       if (match) {
         video.details.setProps.year = match[0];
-        count++;
         return;
       }
 
@@ -140,29 +164,39 @@ function BulkEditor(props) {
         }
       }
     });
-    showSnackbar(`Update year for ${count} sets`);
     updateVideos();
   }
 
   const checkIsSet = () => {
-    const notSetKeywords = [/mix/i, /warm(ing)?[ -]?up/i, /end ?show/i, /movie/i, /re[- ]?cap/i, /favorites by/i, / top /i, /podcast/i, /we are the nightbreed/i];
-    let count = 0;
+    const notSetKeywords = [
+      /mix/i,
+      /warm(ing)?[ -]?up/i,
+      /end ?show/i,
+      /movie/i,
+      /re[- ]?cap/i,
+      /favorites by/i,
+      / top /i,
+      /podcast/i,
+      /we are the nightbreed/i,
+      /down underground/i
+    ];
+
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
         return;
       }
 
       video.details.setProps.isSet = true;
+
       for (let i = 0; i < notSetKeywords.length; i++) {
         if (video.details.title.match(notSetKeywords[i])) {
-          console.log(video.details.title, notSetKeywords[i]);
           video.details.setProps.isSet = false;
-          count++;
           break;
         }
       }
     });
-    showSnackbar(`Updated isSet for ${count} sets`);
+
+    updateVideos();
   }
 
   const checkVideos = () => {
