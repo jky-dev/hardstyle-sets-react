@@ -26,7 +26,6 @@ const Login = () => {
         {sessionStorage.getItem('user')
           ? <div>
               <Button
-                className="user-button"
                 variant="contained"
                 color="secondary"
                 onClick={() => logout()} >
@@ -35,7 +34,6 @@ const Login = () => {
             </div>
           : <div>
               <Button
-                className="user-button"
                 variant="contained"
                 color="primary"
                 onClick={() => loginWithGoogle()} >

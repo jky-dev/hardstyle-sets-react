@@ -3,10 +3,12 @@ import { Card,
   CardHeader,
   Grid,
   CardContent,
+  Typography,
 } from '@material-ui/core';
 import './video-list.css';
 
 function VideoList(props) {
+  const youtubeUrl = 'https://www.youtube.com/watch?v=';
   return (
     <div className="grid-div">
       { props.show
@@ -19,19 +21,20 @@ function VideoList(props) {
               spacing={2}
             >
               {props.videos.map(video =>
-                <Grid item key={video.id}>
+                (video.details.setProps.isSet && <Grid item key={video.id}>
                   <Card>
-                    <CardHeader 
-                      title={video.details.title}
-                    />
                     <CardContent>
-                      {video.details.title}
-                      <br />
-                      {video.details.description}
+                      <Typography>
+                        {video.details.setProps.festival} {video.details.setProps.year}
+                        <br />
+                        <span className="set-name">{video.details.setProps.setName}</span>
+                        <br />
+                      </Typography>
+                      <img onClick={() => {window.open(youtubeUrl + video.id, '_blank')}} src={video.details.thumbnails.medium.url} />
                     </CardContent>
                   </Card>
                 </Grid>
-              )}
+              ))}
             </Grid>
             <div className="empty-div"></div>
           </div>

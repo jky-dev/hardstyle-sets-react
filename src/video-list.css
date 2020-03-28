@@ -1,5 +1,5 @@
 .MuiCard-root {
-  width: 350px;
+  width: 300px;
 }
 
 .grid-div {
@@ -10,4 +10,17 @@
 
 .empty-div {
   height: 16px;
+}
+
+.set-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; /* number of lines to show */
+}
+
+img {
+  width: calc(300px - 32px);
+  cursor: pointer;
 }
