@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, 
   Button,
@@ -50,6 +50,10 @@ function Youtube() {
 
   let fetchedVideos = [];
   let latestVideoId = '';
+
+  useEffect(() => {
+    getVidsFromDB(selectedChannel);
+  }, []);
 
   const isLoggedIn = () => {
     return sessionStorage.getItem('user');
@@ -250,22 +254,20 @@ function Youtube() {
     <div>
       <div>
         <Box flexDirection="row" display="flex">
-          <Box>
-            <FormControl>
-              <Select
-                value={selectedChannel}
-                onChange={handleSelectChange}
-              >
-                {
-                  Object.keys(channels).map(key => (
-                    <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-                  ))
-                }
-              </Select>
-            </FormControl>
-          </Box>
+          <FormControl>
+            <Select
+              value={selectedChannel}
+              onChange={handleSelectChange}
+            >
+              {Object.keys(channels).map(key =>
+                  <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+              )}
+            </Select>
+          </FormControl>
           <Box flexGrow={1}></Box>
-          <Box><Login></Login></Box>
+          <Box>
+            <Login></Login>
+          </Box>
         </Box>
         {isLoggedIn() &&
           <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
