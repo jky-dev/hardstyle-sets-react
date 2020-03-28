@@ -22,26 +22,48 @@ function BulkEditor(props) {
       }
 
       title = video.details.title;
+      title = title.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
       desc = video.details.description;
-      if (title.includes(find)) {
+      if (find && replace && title.includes(find)) {
         console.log('Before:', title);
         title = title.replace(new RegExp(find, 'g'), replace);
         console.log('After:', title);
-        video.details.title = title;
       }
-      if (desc.includes(find)) {
+      video.details.title = title;
+
+      desc = desc.replace(/&amp;/i, '&').replace(/&quot;/i, '"').replace(/&#39;/i, '\'');
+      if (find && replace && desc.includes(find)) {
         console.log('Before:', desc);
         desc = desc.replace(new RegExp(find, 'g'), replace);
         console.log('After:', desc);
-        video.details.description = desc;
       }
-      console.log(video);
+      video.details.description = desc;
     });
     updateVideos();
   }
 
+  const setAll = () => {
+    doReplace();
+    setFestival();
+    setName();
+    setYear();
+    checkIsSet();
+  }
+
   const setFestival = () => {
-    const festivals = [/def[- ]?qon/i, /reverze/i, /hard[- ]?bass/i, /decibel/i];
+    const festivals = [
+      /def[- ]?qon[. ]?1/i,
+      /reverze/i,
+      /hard[- ]?bass/i,
+      /decibel/i,
+      /supremacy/i,
+      /the qontinent/i,
+      /dediqated/i,
+      /epiq/i,
+      /qlimax/i,
+      /x-qlusive holland/i,
+      /impaqt/i,
+    ];
 
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
@@ -59,6 +81,40 @@ function BulkEditor(props) {
     })
   }
 
+  const setName = () => {
+    const names = [/team [a-z]+ /i,];
+    let title;
+    checkVideos() && videos.forEach(video => {
+      if (video.details.setProps.isVerified) {
+        return;
+      }
+      
+      title = video.details.title;
+      for (let i = 0; i < names.length; i++) {
+        if (video.details.title.match(names[i])) {
+          console.log(video.details.title, names[i]);
+          video.details.setProps.setName = video.details.title.match(names[i])[0];
+          break;
+        }
+      }
+      // for getting set names per event
+      const splits = [
+        / @ /,
+        / \| DEDIQATED /,
+        / \| EPIQ/,
+        / \| Qlimax/,
+        / \| X-Qlusive Holland/,
+        / \| IMPAQT/,
+        / \| Defqon.1/,
+      ];
+      for (let i = 0; i < splits.length; i++) {
+        if (title.match(splits[i])) {
+          video.details.setProps.setName = title.split(splits[i])[0];
+        }
+      }
+    });
+  }
+
   const setYear = () => {
     let count = 0;
     let title;
@@ -73,15 +129,23 @@ function BulkEditor(props) {
       if (match) {
         video.details.setProps.year = match[0];
         count++;
+        return;
+      }
+
+      const custom = [{name: /DEDIQATED/, year: 2020}];
+      for (let i = 0; i < custom.length; i++) {
+        if (title.match(custom[i].name)) {
+          video.details.setProps.year = custom[i].year;
+          break;
+        }
       }
     });
-    setSnackbarMessage(`Update year for ${count} sets`);
-    setSnackbarIsOpen(true);
+    showSnackbar(`Update year for ${count} sets`);
     updateVideos();
   }
 
   const checkIsSet = () => {
-    const notSetKeywords = [/mix/i, /warm(ing)?[ -]?up/i, /end ?show/i, /movie/i, /re[- ]?cap/i];
+    const notSetKeywords = [/mix/i, /warm(ing)?[ -]?up/i, /end ?show/i, /movie/i, /re[- ]?cap/i, /favorites by/i, / top /i, /podcast/i, /we are the nightbreed/i];
     let count = 0;
     checkVideos() && videos.forEach(video => {
       if (video.details.setProps.isVerified) {
@@ -98,16 +162,14 @@ function BulkEditor(props) {
         }
       }
     });
-    setSnackbarMessage(`Updated isSet for ${count} sets`);
-    setSnackbarIsOpen(true);
+    showSnackbar(`Updated isSet for ${count} sets`);
   }
 
   const checkVideos = () => {
     if (videos) {
       return true;
     } else {
-      setSnackbarMessage('No videos found');
-      setSnackbarIsOpen(true);
+      showSnackbar('No videos found');
       return false;
     }
   }
@@ -139,6 +201,11 @@ function BulkEditor(props) {
     }
 
     setSnackbarIsOpen(false);
+  }
+
+  const showSnackbar = (msg) => {
+    setSnackbarMessage(msg);
+    setSnackbarIsOpen(true);
   }
 
   return (
@@ -175,6 +242,13 @@ function BulkEditor(props) {
         className="user-button"
         variant="contained"
         color="primary"
+        onClick={() => setName()}>
+        Set name
+      </Button>
+      <Button
+        className="user-button"
+        variant="contained"
+        color="primary"
         onClick={() => setYear()}>
         Set year
       </Button>
@@ -184,6 +258,13 @@ function BulkEditor(props) {
         color="primary"
         onClick={() => checkIsSet()}>
         Set isSet
+      </Button>
+      <Button
+        className="user-button"
+        variant="contained"
+        color="secondary"
+        onClick={() => setAll()}>
+        Set all
       </Button>
       <Button
         className="user-button"

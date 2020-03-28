@@ -10,8 +10,10 @@ import {
   Checkbox,
 } from '@material-ui/core';
 import { database } from './index';
+import './edit-item.css';
 
 function EditItem(props) {
+  const youtubeUrl = 'https://www.youtube.com/watch?v=';
   const [video, setVideo] = React.useState(props.video);
 
   const handleChange = (event, video) => {
@@ -33,6 +35,10 @@ function EditItem(props) {
     let updateObj = {};
     updateObj[video.id] = video.details;
     database.ref().child('/videos/' + video.details.channelTitle).update(updateObj);
+  }
+
+  const openSet = () => {
+    window.open(youtubeUrl + video.id, '_blank');
   }
 
   return (
@@ -95,10 +101,14 @@ function EditItem(props) {
         </FormGroup>
       </FormControl>
       <div>
-        <Button variant="outlined"
+        <Button
+          variant="contained"
           onClick={(e) => saveVideo(e, video)} >
           Save
         </Button>
+        <Button
+          variant="outlined"
+          onClick={openSet}>View</Button>
       </div>
       </CardContent>
     </Card>

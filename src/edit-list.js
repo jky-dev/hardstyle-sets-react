@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid } from '@material-ui/core';
 import './edit-list.css';
 import EditItem from './edit-item';
 
 function EditList(props) {
+  const [filters, setFilters] = useState({
+    isVerified: false,
+  });
+
   return (
     <div className="grid-div">
       {props.show
