@@ -131,14 +131,14 @@ function Youtube() {
           color="secondary"
           onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'} Videos</Button>
         <VideoList videos={setAndVerifiedVideos} show={settings.showVids}></VideoList>
-        <Admin
+        {isLoggedIn () && <Admin
           settings={settings}
           setVideos={setVideos}
           showSnackbar={showSnackbar}
           dbVideos={dbVideos}
           setSettings={setSettings}
           >
-        </Admin>
+        </Admin>}
         <Snackbar
           autoHideDuration={1000}
           message={settings.snackbarMessage}
