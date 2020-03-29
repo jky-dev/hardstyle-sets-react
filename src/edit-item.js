@@ -47,6 +47,7 @@ function EditItem(props) {
       <span className="video-title">
         {video.details.title}
       </span>
+      <span>id: {video.id}</span>
       <br />
       <FormControl>
         <div>

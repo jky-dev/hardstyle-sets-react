@@ -5,10 +5,6 @@
   min-height: 100vh;
 }
 
-h1 {
-  text-align: center;
-}
-
 .MuiFormControl-root, .user-button {
   /* width: 200px; */
   margin: 0 1rem 1rem 0 !important;

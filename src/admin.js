@@ -181,6 +181,7 @@ function Admin(props) {
 
   return (
     <div>
+      <h1>Admin</h1>
       <BulkEditor videos={dbVideos[settings.selectedChannel]} setVideos={setVideos}></BulkEditor>
       <Button
         className="user-button"
