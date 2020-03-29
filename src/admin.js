@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  FormControl,
-  Select,
-  MenuItem,
   Button,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions
+  DialogTitle,
 } from '@material-ui/core';
 import { database } from './index';
+import { channels } from './channel-details';
 import BulkEditor from './bulk-editor';
 import EditList from './edit-list';
-import Login from './login';
 
 function Admin(props) {
   const api_key = process.env.REACT_APP_YT_KEY;
@@ -24,27 +20,9 @@ function Admin(props) {
   const setVideos = props.setVideos;
   const showSnackbar = props.showSnackbar;
   const dbVideos = props.dbVideos;
-  const setSettings = props.setSettings;
 
+  const [editVids, setEditVids] = useState(false);
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const channels = {
-    art_of_dance: {
-      title: 'Art of Dance',
-      id: 'UCWA006v5cHRVqJvwlzRxuHg',
-    },
-    bass_events: {
-      title: 'Bass Events',
-      id: 'UCGgQpBr1shI3IL4pVZ9Cplg',
-    },
-    b2s: {
-      title: 'B2S',
-      id: 'UCVLolPmtm4IPMHx5k0GISHg',
-    },
-    q_dance: {
-      title: 'Q-dance',
-      id: 'UCAEwCfBRlB3jIY9whEfSP5Q',
-    },
-  };
   
   const getDefaultSetProps = () => {
     return {
@@ -170,7 +148,7 @@ function Admin(props) {
     });
   }
 
-  const handleDialogClose = (event, reason) => {
+  const handleDialogClose = () => {
     setDialogIsOpen(false);
   }
 
@@ -188,7 +166,7 @@ function Admin(props) {
   }
 
   const toggleEditVids = () => {
-    dbVideos.length > 0 && setSettings(settings => Object.assign({}, settings, { editVids: !settings.editVids }));
+    dbVideos.length > 0 && setEditVids(editVids => !editVids);
   }
 
   const testFunction = () => {
@@ -200,7 +178,7 @@ function Admin(props) {
     // })
     // updateAllVidsWithDefaults();
   }
-  
+
   return (
     <div>
       <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
@@ -209,7 +187,7 @@ function Admin(props) {
         variant="contained"
         color="secondary"
         onClick={() => toggleEditVids()}>Edit Videos</Button>
-      <EditList videos={dbVideos} show={settings.editVids}></EditList>
+      <EditList videos={dbVideos} show={editVids}></EditList>
       <div>
         <h2>From YouTube</h2>
         <Button

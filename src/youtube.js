@@ -8,43 +8,20 @@ import {
   Snackbar,
 } from '@material-ui/core';
 import { database } from './index';
+import { channels } from './channel-details';
 import Admin from './admin';
 import Login from './login';
 import VideoList from './video-list';
 
 function Youtube() {
-
-  const channels = {
-    art_of_dance: {
-      title: 'Art of Dance',
-      id: 'UCWA006v5cHRVqJvwlzRxuHg',
-    },
-    bass_events: {
-      title: 'Bass Events',
-      id: 'UCGgQpBr1shI3IL4pVZ9Cplg',
-    },
-    b2s: {
-      title: 'B2S',
-      id: 'UCVLolPmtm4IPMHx5k0GISHg',
-    },
-    q_dance: {
-      title: 'Q-dance',
-      id: 'UCAEwCfBRlB3jIY9whEfSP5Q',
-    },
-  };
-
   const [dbVideos, setDbVideos] = useState([]);
   const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState([]);
   const [settings, setSettings] = useState({
     selectedChannel: 'b2s',
     showVids: true,
-    editVids: false,
     snackbarIsOpen: false,
     snackbarMessage: '',
   });
-
-
-
 
   useEffect(() => {
     getVidsFromDB(settings.selectedChannel);
@@ -78,12 +55,12 @@ function Youtube() {
 
   const handleSelectChange = event => {
     console.log(event.target.value);
-    setSettings(settings => Object.assign({}, settings, { selectedChannel: event.target.value }));
+    setSettings(settings => ({...settings, selectedChannel: event.target.value }));
     getVidsFromDB(event.target.value);
   }
 
   const toggleShowVids = () => {
-    setAndVerifiedVideos.length > 0 && setSettings(settings => Object.assign({}, settings, { showVids: !settings.showVids }));
+    setAndVerifiedVideos.length > 0 && setSettings(settings => ({...settings, showVids: !settings.showVids }));
   }
   
   const handleSnackbarClose = (event, reason) => {
@@ -91,7 +68,7 @@ function Youtube() {
       return;
     }
 
-    setSettings(settings => Object.assign({}, settings, { snackbarIsOpen: false }));
+    setSettings(settings => ({...settings, snackbarIsOpen: false }));
   }
 
   const setVideos = (vids) => {
@@ -99,11 +76,7 @@ function Youtube() {
   }
 
   const showSnackbar = msg => {
-    const update = {
-      snackbarMessage: msg,
-      snackbarIsOpen: true,
-    }
-    setSettings(settings => Object.assign({}, settings, update));
+    setSettings(settings => ({...settings, snackbarMessage: msg, snackbarIsOpen: true}));
   }
 
   return (
@@ -135,9 +108,7 @@ function Youtube() {
           settings={settings}
           setVideos={setVideos}
           showSnackbar={showSnackbar}
-          dbVideos={dbVideos}
-          setSettings={setSettings}
-          >
+          dbVideos={dbVideos} >
         </Admin>}
         <Snackbar
           autoHideDuration={1000}
