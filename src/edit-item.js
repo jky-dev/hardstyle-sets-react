@@ -42,7 +42,7 @@ function EditItem(props) {
   }
 
   return (
-    <Card>
+    <Card variant="outlined">
       <CardContent>
       <span className="video-title">
         {video.details.title}

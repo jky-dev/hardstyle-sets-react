@@ -2,6 +2,7 @@
   max-width: 980px;
   margin: auto;
   padding: 1rem;
+  min-height: 100vh;
 }
 
 h1 {

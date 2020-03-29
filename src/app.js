@@ -7,6 +7,7 @@ import {
   createMuiTheme,
   ThemeProvider,
   useMediaQuery,
+  Paper,
 } from '@material-ui/core';
 
 function App() {
@@ -35,13 +36,13 @@ function App() {
   );
 
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <Paper className="App">
         <CssBaseline />
-        <h1>Hello {name ? name : 'World'}!</h1>
+        <h1>Hardstyle Sets - Hello {name ? name : 'World'}!</h1>
         <Youtube></Youtube>
-      </ThemeProvider>
-    </div>
+      </Paper>
+    </ThemeProvider>
   );
 }
 

@@ -23,7 +23,7 @@ function VideoList(props) {
               {props.videos.map(video =>
                 <Grid item key={video.id}>
                   <Fade in={true}>
-                    <Card>
+                    <Card variant="outlined" elevation={3}>
                       <CardContent>
                         <Typography>
                           {video.details.setProps.festival} {video.details.setProps.year}
