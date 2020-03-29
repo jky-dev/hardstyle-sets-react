@@ -20,7 +20,8 @@
   -webkit-line-clamp: 1; /* number of lines to show */
 }
 
-img {
+img, .youtube-video {
   width: calc(300px - 32px);
+  height: 150.74px;
   cursor: pointer;
 }

@@ -1,13 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import YouTube from 'react-youtube';
 import { Card,
   Fade,
   Grid,
   CardContent,
   Typography,
 } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
 import './video-list.css';
 
 function VideoList(props) {
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [paginationCount, setPaginationCount] = useState(Math.ceil(props.videos.length / itemsPerPage));
+  const [startingIndex , setStartingIndex] = useState(0);
+  const [clickedVideo, setClickedVideo] = useState({});
+
+  const handlePageChange = (event, page) => {
+    setStartingIndex((page - 1) * itemsPerPage);
+    setClickedVideo({});
+  }
+
+  useEffect(() => {
+    setPaginationCount(Math.ceil(props.videos.length / itemsPerPage));
+  }, [props.videos]);
+
+  const handleVideoClick = (id) => {
+    const video =  {};
+    video[id] = true;
+    setClickedVideo(clickedVideo => ({...clickedVideo, ...video}));
+  }
+
+  const ytOpts = {
+    playerVars: {
+      autoplay: 1
+    }
+  }
+
   const youtubeUrl = 'https://www.youtube.com/watch?v=';
   return (
     <div className="grid-div">
@@ -20,7 +48,7 @@ function VideoList(props) {
               alignItems="stretch"
               spacing={2}
             >
-              {props.videos.map(video =>
+              {props.videos.slice(startingIndex, startingIndex + itemsPerPage).map(video =>
                 <Grid item key={video.id}>
                   <Fade in={true}>
                     <Card variant="outlined" elevation={3}>
@@ -31,7 +59,12 @@ function VideoList(props) {
                           <span className="set-name">{video.details.setProps.setName}</span>
                           <br />
                         </Typography>
-                        <img onClick={() => {window.open(youtubeUrl + video.id, '_blank')}} src={video.details.thumbnails.medium.url} />
+                        {clickedVideo[video.id]
+                        ? <YouTube
+                          videoId={video.id}
+                          className="youtube-video"
+                          opts={ytOpts} />
+                        : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} /> }
                       </CardContent>
                     </Card>
                   </Fade>
@@ -39,6 +72,7 @@ function VideoList(props) {
               )}
             </Grid>
             <div className="empty-div"></div>
+            <Pagination count={paginationCount} onChange={handlePageChange} />
           </div>
         : <div></div>
     }

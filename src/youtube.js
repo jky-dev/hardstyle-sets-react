@@ -109,16 +109,17 @@ function Youtube() {
               )}
             </Select>
           </FormControl>
+          <Button
+            className="user-button"
+            variant="contained"
+            color="secondary"
+            onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'} Videos</Button>
           <Box flexGrow={1}></Box>
           <Box>
             <Login></Login>
           </Box>
         </Box>
-        <Button
-          className="user-button"
-          variant="contained"
-          color="secondary"
-          onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'} Videos</Button>
+
         <VideoList videos={setAndVerifiedVideos[settings.selectedChannel]} show={settings.showVids}></VideoList>
         {isLoggedIn () && <Admin
           settings={settings}
