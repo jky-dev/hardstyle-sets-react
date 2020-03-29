@@ -166,7 +166,7 @@ function Admin(props) {
   }
 
   const toggleEditVids = () => {
-    dbVideos.length > 0 && setEditVids(editVids => !editVids);
+    dbVideos && setEditVids(editVids => !editVids);
   }
 
   const testFunction = () => {
@@ -181,13 +181,13 @@ function Admin(props) {
 
   return (
     <div>
-      <BulkEditor videos={dbVideos} setVideos={setVideos}></BulkEditor>
+      <BulkEditor videos={dbVideos[settings.selectedChannel]} setVideos={setVideos}></BulkEditor>
       <Button
         className="user-button"
         variant="contained"
         color="secondary"
         onClick={() => toggleEditVids()}>Edit Videos</Button>
-      <EditList videos={dbVideos} show={editVids}></EditList>
+      <EditList videos={dbVideos[settings.selectedChannel]} show={editVids}></EditList>
       <div>
         <h2>From YouTube</h2>
         <Button

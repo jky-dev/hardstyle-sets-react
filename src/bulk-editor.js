@@ -34,6 +34,7 @@ function BulkEditor(props) {
 
       video.details.title = title;
       video.details.description = desc;
+      console.log('Replacing new title and desc for', video.id);
     });
 
     updateVideos();
@@ -78,7 +79,7 @@ function BulkEditor(props) {
 
         if (matches) {
           video.details.setProps.festival = matches[0];
-          console.log(matches[0]);
+          console.log(`Setting festival ${matches[0]} for ${video.id}`);
         }
       }
     });
@@ -119,6 +120,7 @@ function BulkEditor(props) {
       for (let i = 0; i < names.length; i++) {
         if (video.details.title.match(names[i])) {
           video.details.setProps.setName = video.details.title.match(names[i])[0];
+          console.log(`Set name ${video.details.setProps.setName} for ${video.id}`);
           break;
         }
       }
@@ -131,6 +133,7 @@ function BulkEditor(props) {
           } else {
             video.details.setProps.setName = splitArray[1];
           }
+          console.log(`Set name ${video.details.setProps.setName} for ${video.id}`);
           break;
         }
       }
@@ -153,6 +156,7 @@ function BulkEditor(props) {
 
       if (match) {
         video.details.setProps.year = match[0];
+        console.log(`Set year ${match[0]} for ${video.id}`);
         return;
       }
 
@@ -160,6 +164,7 @@ function BulkEditor(props) {
       for (let i = 0; i < custom.length; i++) {
         if (title.match(custom[i].name)) {
           video.details.setProps.year = custom[i].year;
+          console.log(`Set year ${custom[i].year} for ${video.id}`);
           break;
         }
       }
@@ -191,6 +196,7 @@ function BulkEditor(props) {
       for (let i = 0; i < notSetKeywords.length; i++) {
         if (video.details.title.match(notSetKeywords[i])) {
           video.details.setProps.isSet = false;
+          console.log(`Set isSet false for ${video.id}`);
           break;
         }
       }
@@ -213,6 +219,7 @@ function BulkEditor(props) {
       const childRef = '/videos/' + video.details.channelTitle;
       const updateObj = {};
       updateObj[video.id] = video.details;
+      console.log(`Updating ${video.id} to db`);
       database.ref().child(childRef).update(updateObj);
     });
   }

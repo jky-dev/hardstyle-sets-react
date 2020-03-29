@@ -14,8 +14,18 @@ import Login from './login';
 import VideoList from './video-list';
 
 function Youtube() {
-  const [dbVideos, setDbVideos] = useState([]);
-  const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState([]);
+  const [dbVideos, setDbVideos] = useState({
+    art_of_dance: [],
+    bass_events: [],
+    b2s: [],
+    q_dance: [],
+  });
+  const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState({
+    art_of_dance: [],
+    bass_events: [],
+    b2s: [],
+    q_dance: [],
+  });
   const [settings, setSettings] = useState({
     selectedChannel: 'b2s',
     showVids: true,
@@ -47,8 +57,12 @@ function Youtube() {
           tempSetAndVerified.push(tempVideo);
         }
       });
-      setDbVideos(tempVideos.reverse());
-      setSetAndVerifiedVideos(tempSetAndVerified.reverse());
+      let tempVidObj = {};
+      tempVidObj[channel] = tempVideos.reverse();
+      setDbVideos(dbVideos => ({...dbVideos, ...tempVidObj}));
+      let tempSetVerObj = {};
+      tempSetVerObj[channel] = tempSetAndVerified.reverse();
+      setSetAndVerifiedVideos(setAndVerifiedVideos => ({...setAndVerifiedVideos, ...tempSetVerObj}));
       showSnackbar(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
     });
   }
@@ -60,7 +74,7 @@ function Youtube() {
   }
 
   const toggleShowVids = () => {
-    setAndVerifiedVideos.length > 0 && setSettings(settings => ({...settings, showVids: !settings.showVids }));
+    setSettings(settings => ({ ...settings, showVids: !settings.showVids }));
   }
   
   const handleSnackbarClose = (event, reason) => {
@@ -72,7 +86,9 @@ function Youtube() {
   }
 
   const setVideos = (vids) => {
-    setDbVideos(vids);
+    var obj = {};
+    obj[settings.selectedChannel] = vids;
+    setDbVideos(dbVideos => ({...dbVideos, ...obj}));
   }
 
   const showSnackbar = msg => {
@@ -103,7 +119,7 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'} Videos</Button>
-        <VideoList videos={setAndVerifiedVideos} show={settings.showVids}></VideoList>
+        <VideoList videos={setAndVerifiedVideos[settings.selectedChannel]} show={settings.showVids}></VideoList>
         {isLoggedIn () && <Admin
           settings={settings}
           setVideos={setVideos}
