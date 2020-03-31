@@ -31,11 +31,17 @@ function EditList(props) {
               direction="row"
               justify="flex-start"
               alignItems="stretch"
-              spacing={2}
+              spacing={1}
             >
             {props.videos.slice(startingIndex, startingIndex + itemsPerPage).map(video =>
-              <Grid item key={video.id}>
-                <EditItem video={video}></EditItem>
+              <Grid
+                item
+                key={video.id}
+                flexgrow={1}
+                xs={12}
+                sm={6}
+                md={4} >
+                <EditItem className="edit-item" video={video}></EditItem>
               </Grid>
             )}
             </Grid>

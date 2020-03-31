@@ -27,7 +27,7 @@ function Youtube() {
     q_dance: [],
   });
   const [settings, setSettings] = useState({
-    selectedChannel: 'b2s',
+    selectedChannel: 'q_dance',
     showVids: true,
     snackbarIsOpen: false,
     snackbarMessage: '',

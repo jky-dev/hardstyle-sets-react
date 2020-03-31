@@ -8,6 +8,10 @@
   height: 16px;
 }
 
+.edit-item {
+  width: 100%;
+}
+
 .video-title {
   overflow: hidden;
   text-overflow: ellipsis;

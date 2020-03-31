@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
-import { Card,
+import {
   Fade,
   Grid,
-  CardContent,
-  Typography,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import './video-list.css';
 
 function VideoList(props) {
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(24);
   const [paginationCount, setPaginationCount] = useState(Math.ceil(props.videos.length / itemsPerPage));
   const [startingIndex , setStartingIndex] = useState(0);
   const [clickedVideo, setClickedVideo] = useState({});
@@ -25,9 +23,10 @@ function VideoList(props) {
   }, [props.videos]);
 
   const handleVideoClick = (id) => {
-    const video =  {};
-    video[id] = true;
-    setClickedVideo(clickedVideo => ({...clickedVideo, ...video}));
+    // const video =  {};
+    // video[id] = true;
+    // setClickedVideo(clickedVideo => ({...clickedVideo, ...video}));
+    window.open(youtubeUrl + id, "_blank");
   }
 
   const ytOpts = {
@@ -46,27 +45,30 @@ function VideoList(props) {
               direction="row"
               justify="flex-start"
               alignItems="stretch"
-              spacing={2}
+              spacing={1}
             >
               {props.videos.slice(startingIndex, startingIndex + itemsPerPage).map(video =>
-                <Grid item key={video.id}>
+                <Grid
+                  item
+                  key={video.id}
+                  flexgrow={1}
+                  xs={12}
+                  sm={6}
+                  md={4} >
                   <Fade in={true}>
-                    <Card variant="outlined" elevation={3}>
-                      <CardContent>
-                        <Typography>
-                          {video.details.setProps.festival} {video.details.setProps.year}
-                          <br />
-                          <span className="set-name">{video.details.setProps.setName}</span>
-                          <br />
-                        </Typography>
-                        {clickedVideo[video.id]
-                        ? <YouTube
-                          videoId={video.id}
-                          className="youtube-video"
-                          opts={ytOpts} />
-                        : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} /> }
-                      </CardContent>
-                    </Card>
+                    <div className="video-item">
+                      {clickedVideo[video.id]
+                      ? <YouTube
+                        videoId={video.id}
+                        className="youtube-video"
+                        opts={ytOpts} />
+                      : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} /> }
+                      <p variant="body1">
+                        {video.details.setProps.festival} {video.details.setProps.year}
+                        <br />
+                        <span className="set-name">{video.details.setProps.setName}</span>
+                      </p>
+                    </div>
                   </Fade>
                 </Grid>
               )}
