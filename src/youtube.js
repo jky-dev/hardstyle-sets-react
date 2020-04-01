@@ -18,6 +18,7 @@ function Youtube() {
     b2s: [],
     q_dance: [],
   });
+  const [allVidsSorted, setAllVidsSorted] = useState([]);
   const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState({
     art_of_dance: [],
     bass_events: [],
@@ -30,10 +31,15 @@ function Youtube() {
     snackbarIsOpen: false,
     snackbarMessage: '',
   });
+  const [loadedCounter, setLoadedCounter] = useState(0);
 
   useEffect(() => {
     getAllVidsFromDB();
   }, []);
+
+  useEffect(() => {
+    loadedCounter === 4 && sortAllVideosByDate();
+  }, [loadedCounter])
 
   const isLoggedIn = () => {
     return sessionStorage.getItem('user');
@@ -68,9 +74,24 @@ function Youtube() {
       let tempSetVerObj = {};
       tempSetVerObj[channel] = tempSetAndVerified.reverse();
       setSetAndVerifiedVideos(setAndVerifiedVideos => ({...setAndVerifiedVideos, ...tempSetVerObj}));
+      setLoadedCounter(loadedCounter => (loadedCounter + 1));
       console.log(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
       showSnackbar(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
     });
+  }
+
+  const sortAllVideosByDate = () => {
+    console.log('sorting');
+    let allVids = [];
+    Object.values(setAndVerifiedVideos).forEach(array => {
+      console.log(array);
+      allVids = [...allVids, ...array];
+    });
+    console.log(allVids);
+    allVids.sort((a, b) => {
+      return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
+    console.log(allVids);
+    setAllVidsSorted(allVids);
   }
 
   const handleSelectChange = event => {
@@ -118,7 +139,7 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
-        <VideoList videos={setAndVerifiedVideos[settings.selectedChannel]} show={settings.showVids}></VideoList>
+        <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
         {isLoggedIn () &&
           <Admin
             settings={settings}

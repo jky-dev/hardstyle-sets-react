@@ -58,7 +58,7 @@ function App() {
             <IconButton edge="start" color="inherit" aria-label="menu">
               <MenuIcon />
             </IconButton>
-            <Typography variant="h1" class={classes.title}>
+            <Typography variant="h5" className={classes.title}>
               Hardstyle Sets
             </Typography>
             <Login color="inherit"></Login>
