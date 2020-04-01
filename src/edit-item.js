@@ -49,9 +49,10 @@ function EditItem(props) {
       </span>
       <span>id: {video.id}</span>
       <br />
-      <FormControl>
+      <FormControl className="edit-item-form">
         <div>
           <TextField
+            className="text-field-item"
             label="Set Name"
             name="setName"
             value={video.details.setProps.setName}
@@ -59,6 +60,7 @@ function EditItem(props) {
         </div>
         <div>
           <TextField
+            className="text-field-item"
             label="Festival"
             name="festival"
             value={video.details.setProps.festival}
@@ -66,6 +68,7 @@ function EditItem(props) {
         </div>
         <div>
           <TextField
+            className="text-field-item"
             label="Year"
             name="year"
             value={video.details.setProps.year}

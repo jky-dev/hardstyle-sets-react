@@ -23,9 +23,6 @@ function VideoList(props) {
   }, [props.videos]);
 
   const handleVideoClick = (id) => {
-    // const video =  {};
-    // video[id] = true;
-    // setClickedVideo(clickedVideo => ({...clickedVideo, ...video}));
     window.open(youtubeUrl + id, "_blank");
   }
 
@@ -52,9 +49,10 @@ function VideoList(props) {
                   item
                   key={video.id}
                   flexgrow={1}
-                  xs={12}
-                  sm={6}
-                  md={4} >
+                  xs={6}
+                  sm={4}
+                  md={3}
+                  lg={2} >
                   <Fade in={true}>
                     <div className="video-item">
                       {clickedVideo[video.id]

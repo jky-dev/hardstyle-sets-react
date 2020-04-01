@@ -1,17 +1,20 @@
 .App {
-  max-width: 980px;
+  max-width: 1440px;
   margin: auto;
   padding: 1rem;
   min-height: 100vh;
 }
 
+.MuiAppBar-root {
+  margin-bottom: 1rem;
+}
+
 .MuiFormControl-root, .user-button {
-  /* width: 200px; */
   margin: 0 1rem 1rem 0 !important;
 }
 
 .MuiInputBase-root {
-  min-width: 200px;
+  min-width: 100px;
 }
 
 .MuiMenuItem-root {

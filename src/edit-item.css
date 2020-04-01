@@ -1,3 +1,7 @@
 .MuiButtonBase-root {
   margin-right: 1rem !important;
 }
+
+.text-field-item, .edit-item-form {
+  width: 100%;
+}

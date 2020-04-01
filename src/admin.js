@@ -200,6 +200,7 @@ function Admin(props) {
           className="user-button"
           variant="outlined"
           color="secondary"
+          disabled={true}
           onClick={() => setDialogIsOpen(true)}>Fetch All Videos</Button>
         <h2>Testing</h2>
         <Button

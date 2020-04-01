@@ -26,16 +26,16 @@ const Login = () => {
         {sessionStorage.getItem('user')
           ? <div>
               <Button
-                variant="contained"
-                color="secondary"
+                // variant="contained"
+                // color="secondary"
                 onClick={() => logout()} >
                 Logout
               </Button>
             </div>
           : <div>
               <Button
-                variant="contained"
-                color="primary"
+                // variant="contained"
+                // color="primary"
                 onClick={() => loginWithGoogle()} >
                 Login
               </Button>

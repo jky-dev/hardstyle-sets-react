@@ -3,15 +3,29 @@ import './app.css';
 import Youtube from './youtube';
 import { auth } from './index';
 import {
+  AppBar,
   CssBaseline,
   createMuiTheme,
-  ThemeProvider,
-  useMediaQuery,
+  IconButton,
+  makeStyles,
   Paper,
+  ThemeProvider,
+  Toolbar,
+  Typography,
+  useMediaQuery,
 } from '@material-ui/core';
+import Login from './login';
+import MenuIcon from '@material-ui/icons/Menu';
+
+const useStyles = makeStyles((theme) => ({
+  title: {
+    flexGrow: 1,
+  },
+}));
 
 function App() {
   const [name, setName] = useState(null);
+  const classes = useStyles();
 
   auth.onAuthStateChanged(user => {
     if (user) {
@@ -39,7 +53,17 @@ function App() {
     <ThemeProvider theme={theme}>
       <Paper className="App">
         <CssBaseline />
-        <h1>Hardstyle Sets - Hello {name ? name : 'World'}!</h1>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="menu">
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h1" class={classes.title}>
+              Hardstyle Sets
+            </Typography>
+            <Login color="inherit"></Login>
+          </Toolbar>
+        </AppBar>
         <Youtube></Youtube>
       </Paper>
     </ThemeProvider>

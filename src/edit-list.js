@@ -5,7 +5,7 @@ import './edit-list.css';
 import EditItem from './edit-item';
 
 function EditList(props) {
-  const [itemsPerPage, setItemsPerPage] = useState(15);
+  const [itemsPerPage, setItemsPerPage] = useState(24);
   const [paginationCount, setPaginationCount] = useState(Math.ceil(props.videos.length / itemsPerPage));
   const [filters, setFilters] = useState({
     verified: false,
@@ -40,13 +40,16 @@ function EditList(props) {
                 flexgrow={1}
                 xs={12}
                 sm={6}
-                md={4} >
+                md={4}
+                lg={3} >
                 <EditItem className="edit-item" video={video}></EditItem>
               </Grid>
             )}
             </Grid>
             <div className="empty-div"></div>
-            <Pagination count={paginationCount} onChange={handlePageChange} />
+            <Pagination
+              count={paginationCount}
+              onChange={handlePageChange} />
           </div>
         : <div></div>
       }

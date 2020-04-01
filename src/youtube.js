@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
   FormControl,
   Select,
   MenuItem,
@@ -10,7 +9,6 @@ import {
 import { database } from './index';
 import { channels } from './channel-details';
 import Admin from './admin';
-import Login from './login';
 import VideoList from './video-list';
 
 function Youtube() {
@@ -34,11 +32,18 @@ function Youtube() {
   });
 
   useEffect(() => {
-    getVidsFromDB(settings.selectedChannel);
+    getAllVidsFromDB();
   }, []);
 
   const isLoggedIn = () => {
     return sessionStorage.getItem('user');
+  }
+
+  const getAllVidsFromDB = () => {
+    Object.keys(channels).forEach((key, value) => {
+      console.log(key, channels[key]);
+      getVidsFromDB(key);
+    });
   }
 
   const getVidsFromDB = channel => {
@@ -63,6 +68,7 @@ function Youtube() {
       let tempSetVerObj = {};
       tempSetVerObj[channel] = tempSetAndVerified.reverse();
       setSetAndVerifiedVideos(setAndVerifiedVideos => ({...setAndVerifiedVideos, ...tempSetVerObj}));
+      console.log(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
       showSnackbar(`Loaded ${tempVideos.length}, ${tempSetAndVerified.length} videos from DB for ${channels[channel].title}`);
     });
   }
@@ -70,7 +76,6 @@ function Youtube() {
   const handleSelectChange = event => {
     console.log(event.target.value);
     setSettings(settings => ({...settings, selectedChannel: event.target.value }));
-    getVidsFromDB(event.target.value);
   }
 
   const toggleShowVids = () => {
@@ -98,35 +103,30 @@ function Youtube() {
   return (
     <div>
       <div>
-        <Box flexDirection="row" display="flex">
-          <FormControl>
-            <Select
-              value={settings.selectedChannel}
-              onChange={handleSelectChange}
-            >
-              {Object.keys(channels).map(key =>
-                <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="secondary"
-            onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'} Videos</Button>
-          <Box flexGrow={1}></Box>
-          <Box>
-            <Login></Login>
-          </Box>
-        </Box>
-
+        <FormControl>
+          <Select
+            value={settings.selectedChannel}
+            onChange={handleSelectChange}
+          >
+            {Object.keys(channels).map(key =>
+              <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+            )}
+          </Select>
+        </FormControl>
+        <Button
+          className="user-button"
+          variant="contained"
+          color="secondary"
+          onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
         <VideoList videos={setAndVerifiedVideos[settings.selectedChannel]} show={settings.showVids}></VideoList>
-        {isLoggedIn () && <Admin
-          settings={settings}
-          setVideos={setVideos}
-          showSnackbar={showSnackbar}
-          dbVideos={dbVideos} >
-        </Admin>}
+        {isLoggedIn () &&
+          <Admin
+            settings={settings}
+            setVideos={setVideos}
+            showSnackbar={showSnackbar}
+            dbVideos={dbVideos} >
+          </Admin>
+        }
         <Snackbar
           autoHideDuration={1000}
           message={settings.snackbarMessage}
