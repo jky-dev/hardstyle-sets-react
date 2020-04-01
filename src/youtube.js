@@ -5,6 +5,7 @@ import {
   MenuItem,
   Button,
   Snackbar,
+  Typography
 } from '@material-ui/core';
 import { database } from './index';
 import { channels } from './channel-details';
@@ -139,6 +140,7 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
+        <Typography variant="h6" className="category-heading">Most Recent</Typography>
         <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
         {isLoggedIn () &&
           <Admin

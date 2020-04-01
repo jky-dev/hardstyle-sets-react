@@ -20,3 +20,7 @@
 .MuiMenuItem-root {
   width: 100% !important;
 }
+
+.category-heading {
+  margin-bottom: 1rem !important;
+}
