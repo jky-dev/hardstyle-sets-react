@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Button,
   CircularProgress,
-  createMuiTheme,
   Divider,
   Drawer,
-  FormControl,
   Hidden,
   List,
   ListItem,
   ListItemText,
   makeStyles,
-  MenuItem,
-  Select,
   Snackbar,
   Typography,
-  useMediaQuery,
+  useTheme,
 } from '@material-ui/core';
 import { database } from './index';
 import { channels } from './channel-details';
@@ -28,20 +23,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
-  root: {
-    display: 'flex',
-    height: '100vh',
-  },
   drawer: {
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
     },
-  },
-  appBar: {
-    position: 'fixed',
-    zIndex: theme.zIndex.drawerPaper + 1,
-    width: '100%',
-    flexGrow: 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -59,32 +44,15 @@ const useStyles = makeStyles((theme) => ({
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
-    padding: '1rem 1rem 0 1rem',
+    padding: '1rem',
     width: '100%',
-    flexGrow: 1,
-    height: '100vh',
+    minHeight: '100vh',
   },
 }));
 
 function Youtube(props) {
   const classes = useStyles();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-  const theme = React.useMemo(
-    () => 
-      createMuiTheme({
-        palette: {
-          type: prefersDarkMode ? 'dark' : 'light',
-        },
-      }),
-    [prefersDarkMode],
-  );
+  const theme = useTheme();
 
   const [dbVideos, setDbVideos] = useState({
     art_of_dance: [],
@@ -118,6 +86,11 @@ function Youtube(props) {
 
   const isLoggedIn = () => {
     return sessionStorage.getItem('user');
+  }
+
+  const isAdmin = () => {
+    return sessionStorage.getItem('user') &&
+      JSON.parse(sessionStorage.getItem('user')).uid === 'cVfzuiMGbHQApk0i7h27i7LgMoK2';
   }
 
   const getAllVidsFromDB = () => {
@@ -170,14 +143,14 @@ function Youtube(props) {
     setLoading(false);
   }
 
-  const handleSelectChange = event => {
-    console.log(event.target.value);
-    setSettings(settings => ({...settings, selectedChannel: event.target.value }));
+  const handleSelectChange = channel => {
+    console.log(channel);
+    setSettings(settings => ({...settings, selectedChannel: channel }));
   }
 
-  const toggleShowVids = () => {
-    setSettings(settings => ({ ...settings, showVids: !settings.showVids }));
-  }
+  const handleDrawerToggle = () => {
+    props.setMobileOpen();
+  };
   
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -215,9 +188,12 @@ function Youtube(props) {
           <ListItemText primary="Channels" />
         </ListItem>
         <Divider />
-        {Object.values(channels).map((channel, index) => (
-          <ListItem button key={channel.title}>
-            <ListItemText primary={channel.title} />
+        {Object.keys(channels).map((channel, index) => (
+          <ListItem
+            button
+            key={channels[channel].title}
+            onClick={() => handleSelectChange(channel)}>
+            <ListItemText primary={channels[channel].title} />
           </ListItem>
         ))}
       </List>
@@ -259,21 +235,6 @@ function Youtube(props) {
       <main className={classes.content}>
         <div className={classes.toolbar}></div>
         <div>
-          <FormControl>
-            <Select
-              value={settings.selectedChannel}
-              onChange={handleSelectChange}
-            >
-              {Object.keys(channels).map(key =>
-                <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          <Button
-            className="user-button"
-            variant="contained"
-            color="secondary"
-            onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
           {loading &&
             <div className="full-screen">
               <CircularProgress />
@@ -283,7 +244,7 @@ function Youtube(props) {
             <div>
               <Typography variant="h6" className="category-heading">Most Recent</Typography>
               <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
-              {isLoggedIn () &&
+              {isAdmin() &&
                 <Admin
                   settings={settings}
                   setVideos={setVideos}

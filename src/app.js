@@ -119,7 +119,7 @@ function App() {
             <Login color="inherit"></Login>
           </Toolbar>
         </AppBar>
-        <Youtube mobileOpen={mobileOpen}></Youtube>
+        <Youtube mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}></Youtube>
       </Paper>
     </ThemeProvider>
   );
