@@ -2,18 +2,90 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   CircularProgress,
+  createMuiTheme,
+  Divider,
+  Drawer,
   FormControl,
+  Hidden,
+  List,
+  ListItem,
+  ListItemText,
+  makeStyles,
   MenuItem,
   Select,
   Snackbar,
   Typography,
+  useMediaQuery,
 } from '@material-ui/core';
 import { database } from './index';
 import { channels } from './channel-details';
 import Admin from './admin';
 import VideoList from './video-list';
 
-function Youtube() {
+const drawerWidth = 140;
+
+const useStyles = makeStyles((theme) => ({
+  title: {
+    flexGrow: 1,
+  },
+  root: {
+    display: 'flex',
+    height: '100vh',
+  },
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+    },
+  },
+  appBar: {
+    position: 'fixed',
+    zIndex: theme.zIndex.drawerPaper + 1,
+    width: '100%',
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  content: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+    padding: '1rem 1rem 0 1rem',
+    width: '100%',
+    flexGrow: 1,
+    height: '100vh',
+  },
+}));
+
+function Youtube(props) {
+  const classes = useStyles();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () => 
+      createMuiTheme({
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
   const [dbVideos, setDbVideos] = useState({
     art_of_dance: [],
     bass_events: [],
@@ -125,49 +197,109 @@ function Youtube() {
     setSettings(settings => ({...settings, snackbarMessage: msg, snackbarIsOpen: true}));
   }
 
+  const drawer = (
+    <div>
+      <div className={classes.toolbar} />
+      <List>
+        <ListItem button>
+          <ListItemText primary="Most Recent" />
+        </ListItem>
+        <ListItem button>
+          <ListItemText primary="Top Rated" />
+        </ListItem>
+        <ListItem button>
+          <ListItemText primary="Most Viewed" />
+        </ListItem>
+        <Divider />
+        <ListItem>
+          <ListItemText primary="Channels" />
+        </ListItem>
+        <Divider />
+        {Object.values(channels).map((channel, index) => (
+          <ListItem button key={channel.title}>
+            <ListItemText primary={channel.title} />
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
   return (
     <div>
-      <div>
-        <FormControl>
-          <Select
-            value={settings.selectedChannel}
-            onChange={handleSelectChange}
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={props.mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
           >
-            {Object.keys(channels).map(key =>
-              <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-        <Button
-          className="user-button"
-          variant="contained"
-          color="secondary"
-          onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
-        {loading &&
-          <div className="full-screen">
-            <CircularProgress />
-          </div>
-        }
-        {!loading &&
-          <div>
-            <Typography variant="h6" className="category-heading">Most Recent</Typography>
-            <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
-            {isLoggedIn () &&
-              <Admin
-                settings={settings}
-                setVideos={setVideos}
-                showSnackbar={showSnackbar}
-                dbVideos={dbVideos} >
-              </Admin>
-            }
-          </div>
-        }
-        <Snackbar
-          autoHideDuration={1000}
-          message={settings.snackbarMessage}
-          open={settings.snackbarIsOpen}
-          onClose={handleSnackbarClose} />
-      </div>
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content}>
+        <div className={classes.toolbar}></div>
+        <div>
+          <FormControl>
+            <Select
+              value={settings.selectedChannel}
+              onChange={handleSelectChange}
+            >
+              {Object.keys(channels).map(key =>
+                <MenuItem value={key} key={key}>{channels[key].title}</MenuItem>
+              )}
+            </Select>
+          </FormControl>
+          <Button
+            className="user-button"
+            variant="contained"
+            color="secondary"
+            onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
+          {loading &&
+            <div className="full-screen">
+              <CircularProgress />
+            </div>
+          }
+          {!loading &&
+            <div>
+              <Typography variant="h6" className="category-heading">Most Recent</Typography>
+              <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
+              {isLoggedIn () &&
+                <Admin
+                  settings={settings}
+                  setVideos={setVideos}
+                  showSnackbar={showSnackbar}
+                  dbVideos={dbVideos} >
+                </Admin>
+              }
+            </div>
+          }
+        </div>
+      </main>
+      <Snackbar
+        autoHideDuration={1000}
+        message={settings.snackbarMessage}
+        open={settings.snackbarIsOpen}
+        onClose={handleSnackbarClose} />
     </div>
   )
 }

@@ -2,8 +2,13 @@
   width: 100%;
 }
 
+.MuiToolbar-root {
+  z-index: 2000 !important;
+}
+
 .MuiAppBar-root {
   margin-bottom: 1rem;
+  z-index: 2000 !important;
 }
 
 .MuiFormControl-root, .user-button {
