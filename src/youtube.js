@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FormControl,
-  Select,
-  MenuItem,
   Button,
+  CircularProgress,
+  FormControl,
+  MenuItem,
+  Select,
   Snackbar,
-  Typography
+  Typography,
 } from '@material-ui/core';
 import { database } from './index';
 import { channels } from './channel-details';
@@ -33,6 +34,7 @@ function Youtube() {
     snackbarMessage: '',
   });
   const [loadedCounter, setLoadedCounter] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getAllVidsFromDB();
@@ -93,6 +95,7 @@ function Youtube() {
       return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
     console.log(allVids);
     setAllVidsSorted(allVids);
+    setLoading(false);
   }
 
   const handleSelectChange = event => {
@@ -140,15 +143,24 @@ function Youtube() {
           variant="contained"
           color="secondary"
           onClick={() => toggleShowVids()}>{settings.showVids ? 'Hide' : 'Show'}</Button>
-        <Typography variant="h6" className="category-heading">Most Recent</Typography>
-        <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
-        {isLoggedIn () &&
-          <Admin
-            settings={settings}
-            setVideos={setVideos}
-            showSnackbar={showSnackbar}
-            dbVideos={dbVideos} >
-          </Admin>
+        {loading &&
+          <div className="full-screen">
+            <CircularProgress />
+          </div>
+        }
+        {!loading &&
+          <div>
+            <Typography variant="h6" className="category-heading">Most Recent</Typography>
+            <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
+            {isLoggedIn () &&
+              <Admin
+                settings={settings}
+                setVideos={setVideos}
+                showSnackbar={showSnackbar}
+                dbVideos={dbVideos} >
+              </Admin>
+            }
+          </div>
         }
         <Snackbar
           autoHideDuration={1000}
