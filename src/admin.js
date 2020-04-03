@@ -142,6 +142,10 @@ function Admin(props) {
           return;
         }
 
+        statistics.displayRatio = displayRatio(statistics);
+        statistics.actualRatio = actualRatio(statistics);
+        statistics.displayViews = views(statistics);
+
         const obj = Object.assign({}, video.details, { stats: statistics });
 
         database.ref().child(`/videos/${video.details.channelTitle}/${video.id}`).update(obj)
@@ -150,6 +154,30 @@ function Admin(props) {
         })
         .catch(err => console.log('Error updating videos with default', err));
       });
+  }
+
+  const actualRatio = stats => {
+    const total = parseInt(stats.likeCount) + parseInt(stats.dislikeCount);
+    const likes = parseInt(stats.likeCount);
+    return (likes * 100) / total;
+  }
+
+  const displayRatio = stats => {
+    const total = parseInt(stats.likeCount) + parseInt(stats.dislikeCount);
+    const likes = parseInt(stats.likeCount);
+    return Math.round(likes * 100 / total);
+  }
+
+  const views = stats => {
+    const views = parseInt(stats.viewCount);
+
+    if (views < 1000) return views;
+
+    if (views < 1000000) {
+      return Math.round(views/1000) + 'K';
+    }
+
+    return Math.round(views/100000)/10 + 'M';
   }
 
   const handleDialogClose = () => {

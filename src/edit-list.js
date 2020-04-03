@@ -5,7 +5,8 @@ import './edit-list.css';
 import EditItem from './edit-item';
 
 function EditList(props) {
-  const [itemsPerPage, setItemsPerPage] = useState(24);
+  const itemsPerPage = 24;
+  // const [itemsPerPage, setItemsPerPage] = useState(24);
   const [paginationCount, setPaginationCount] = useState(Math.ceil(props.videos.length / itemsPerPage));
   const [filters, setFilters] = useState({
     verified: false,

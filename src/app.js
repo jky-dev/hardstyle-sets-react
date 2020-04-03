@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './app.css';
 import Youtube from './youtube';
 import { auth } from './index';

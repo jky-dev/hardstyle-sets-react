@@ -32,3 +32,7 @@ img, .youtube-video {
   cursor: pointer;
   width: 100%;
 }
+
+.MuiTypography-body2 {
+  opacity: 90%;
+}

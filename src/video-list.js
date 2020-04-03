@@ -34,68 +34,49 @@ function VideoList(props) {
     }
   }
 
-  const ratio = video => {
-    const total = parseInt(video.details.stats.likeCount) + parseInt(video.details.stats.dislikeCount);
-    const likes = parseInt(video.details.stats.likeCount);
-    return Math.round(likes * 100 / total);
-  }
-
-  const views = video => {
-    const views = parseInt(video.details.stats.viewCount);
-
-    if (views < 1000) return views;
-
-    if (views < 1000000) {
-      return Math.round(views/1000) + 'K';
-    }
-
-    return Math.round(views/100000)/10 + 'M';
-  }
-
   const youtubeUrl = 'https://www.youtube.com/watch?v=';
   return (
     <div className="grid-div">
-      { props.show
-        ? <div>
+      <div>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="stretch"
+          spacing={1}
+        >
+          {props.videos.slice(startingIndex, startingIndex + itemsPerPage).map(video =>
             <Grid
-              container
-              direction="row"
-              justify="flex-start"
-              alignItems="stretch"
-              spacing={1}
-            >
-              {props.videos.slice(startingIndex, startingIndex + itemsPerPage).map(video =>
-                <Grid
-                  item
-                  key={video.id}
-                  flexgrow={1}
-                  xs={6}
-                  sm={4}
-                  md={3}
-                  lg={2} >
-                  <Fade in={true}>
-                    <div className="video-item">
-                      {clickedVideo[video.id]
-                      ? <YouTube
-                        videoId={video.id}
-                        className="youtube-video"
-                        opts={ytOpts} />
-                      : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} alt='video thumbnail'/> }
-                      <Typography variant="body1">
-                        <span className="set-name">{video.details.setProps.setName}</span>
-                        <span className="festival-name">{video.details.setProps.festival} {video.details.setProps.year}</span>
-                        <span>{views(video)} views {ratio(video)}% rating</span>
-                      </Typography>
-                    </div>
-                  </Fade>
-                </Grid>
-              )}
+              item
+              key={video.id}
+              flexgrow={1}
+              xs={6}
+              sm={4}
+              md={3}
+              lg={2} >
+              <Fade in={true}>
+                <div className="video-item">
+                  {clickedVideo[video.id]
+                  ? <YouTube
+                    videoId={video.id}
+                    className="youtube-video"
+                    opts={ytOpts} />
+                  : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} alt='video thumbnail'/> }
+                  <Typography variant="body1">
+                    <span className="set-name">{video.details.setProps.setName}</span>
+                  </Typography>
+                  <Typography variant="body2">
+                    <span className="festival-name">{video.details.setProps.festival} - {video.details.setProps.year}</span>
+                    <span>{video.details.stats.displayViews} views {video.details.stats.displayRatio}% rating</span>
+                  </Typography>
+                </div>
+              </Fade>
             </Grid>
-            <div className="empty-div"></div>
-            <Pagination count={paginationCount} onChange={handlePageChange} />
-          </div>
-        : <div></div>
-    }
+          )}
+        </Grid>
+        <div className="empty-div"></div>
+        <Pagination count={paginationCount} onChange={handlePageChange} />
+      </div>
     </div>
   )
 }

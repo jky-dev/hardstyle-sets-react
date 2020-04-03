@@ -54,28 +54,19 @@ function Youtube(props) {
   const classes = useStyles();
   const theme = useTheme();
 
-  const [dbVideos, setDbVideos] = useState({
-    art_of_dance: [],
-    bass_events: [],
-    b2s: [],
-    q_dance: [],
-  });
+  const [dbVideos, setDbVideos] = useState({}); // is an object with channel: [videos]
   const [allVidsSorted, setAllVidsSorted] = useState([]);
-  const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState({
-    art_of_dance: [],
-    bass_events: [],
-    b2s: [],
-    q_dance: [],
-  });
+  const [setAndVerifiedVideos, setSetAndVerifiedVideos] = useState({}); // is an object with channel: [videos]
   const [settings, setSettings] = useState({
     selectedChannel: 'q_dance',
-    showVids: true,
     snackbarIsOpen: false,
     snackbarMessage: '',
   });
   const [shownVideoList, setShownVideoList] = useState([]);
   const [loadedCounter, setLoadedCounter] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedSortType, setSelectedSortType] = useState('Most Recent');
+  const [displaySelectedChannel, setDisplaySelectedChannel] = useState('All Channels')
 
   useEffect(() => {
     getAllVidsFromDB();
@@ -133,22 +124,48 @@ function Youtube(props) {
     console.log('sorting');
     let allVids = [];
     Object.values(setAndVerifiedVideos).forEach(array => {
-      console.log(array);
       allVids = [...allVids, ...array];
     });
-    console.log(allVids);
     allVids.sort((a, b) => {
       return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
-    console.log(allVids);
     setAllVidsSorted(allVids);
     setShownVideoList(allVids);
     setLoading(false);
+  }
+
+  const handleAllVidsClick = () => {
+    setShownVideoList(allVidsSorted);
+    setDisplaySelectedChannel('All Channels');
   }
 
   const handleSelectChange = channel => {
     console.log(channel);
     setSettings(settings => ({...settings, selectedChannel: channel }));
     setShownVideoList(setAndVerifiedVideos[channel]);
+    setDisplaySelectedChannel(channels[channel].title);
+  }
+
+  const handleSelectedSortType = sortType => {
+    if (sortType === 'Most Viewed') {
+      let sorted = shownVideoList.sort((a, b) => {
+        return parseInt(b.details.stats.viewCount) > parseInt(a.details.stats.viewCount) ? 1 : -1 });
+      setShownVideoList(sorted);
+      setSelectedSortType(sortType);
+    }
+
+    if (sortType === 'Most Recent') {
+      let sorted = shownVideoList.sort((a, b) => {
+        return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
+      setShownVideoList(sorted);
+      setSelectedSortType(sortType);
+    }
+
+    if (sortType === 'Top Rated') {
+      let sorted = shownVideoList.sort((a, b) => {
+        return parseInt(b.details.stats.actualRatio) > parseInt(a.details.stats.actualRatio) ? 1 : -1 });
+      setShownVideoList(sorted);
+      setSelectedSortType(sortType);
+    }
   }
 
   const handleDrawerToggle = () => {
@@ -177,20 +194,23 @@ function Youtube(props) {
     <div>
       <div className={classes.toolbar} />
       <List>
-        <ListItem button>
-          <ListItemText primary="Most Recent" />
-        </ListItem>
-        <ListItem button>
-          <ListItemText primary="Top Rated" />
-        </ListItem>
-        <ListItem button>
-          <ListItemText primary="Most Viewed" />
-        </ListItem>
+        {['Most Recent', 'Top Rated', 'Most Viewed'].map(sortType => (
+          <ListItem
+            button
+            onClick={() => handleSelectedSortType(sortType)}>
+            <ListItemText primary={sortType} />
+          </ListItem>
+        ))}
         <Divider />
         <ListItem>
           <ListItemText primary="Channels" />
         </ListItem>
         <Divider />
+        <ListItem
+          button
+          onClick={() => handleAllVidsClick()} >
+          <ListItemText primary="All Channels" />
+        </ListItem>
         {Object.keys(channels).map((channel, index) => (
           <ListItem
             button
@@ -245,8 +265,8 @@ function Youtube(props) {
           }
           {!loading &&
             <div>
-              <Typography variant="h6" className="category-heading">Most Recent</Typography>
-              <VideoList videos={shownVideoList} show={settings.showVids}></VideoList>
+              <Typography variant="h6" className="category-heading">{selectedSortType} - {displaySelectedChannel}</Typography>
+              <VideoList videos={shownVideoList}></VideoList>
               {isAdmin() &&
                 <Admin
                   settings={settings}
