@@ -119,33 +119,37 @@ function Admin(props) {
     });
   }
 
-  // checks if there are videos in the DB with no setProps
-  const updateAllVidsWithDefaults = () => {
-    let obj = {};
-    database.ref().child('/videos').once('value', channels => {
-      let channelName;
-      let channelObj = {};
+  const getStatsForAllVids = () => {
+    Object.keys(channels).forEach(channel => {
+      dbVideos[channel].forEach(video => {
+        if (video.details.setProps.isSet && video.details.setProps.isVerified) {
+          getStatsForVid(video);
+        }
+      })
+    })
+  }
 
-      channels.forEach(channel => {
-        channelName = channel.key;
-        channelObj = {};
+  const getStatsForVid = video => {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&key=${api_key}&id=${video.id}`;
 
-        channel.forEach(video => {
-          if (!video.val().setProps) {
-            channelObj[video.key] = Object.assign({}, {setProps: getDefaultSetProps()}, video.val());
-          } else {
-            channelObj[video.key] = video.val();
-          }
-        });
+    fetch(url)
+      .then(res => res.json())
+      .then(result => {
+        const statistics = (result.items && result.items[0].statistics) || null;
 
-        obj[channelName] = channelObj;
-      });
-      database.ref().child('/videos').update(obj)
+        if (!statistics) {
+          console.log(`Failed to get stats for ${video.id}`);
+          return;
+        }
+
+        const obj = Object.assign({}, video.details, { stats: statistics });
+
+        database.ref().child(`/videos/${video.details.channelTitle}/${video.id}`).update(obj)
         .then(() => {
-          console.log('Successfully updated videos with defaults')
+          console.log(`Successfully ${video.id} with stats`)
         })
         .catch(err => console.log('Error updating videos with default', err));
-    });
+      });
   }
 
   const handleDialogClose = () => {
@@ -198,10 +202,9 @@ function Admin(props) {
           onClick={() => handleFetchNewClick(settings.selectedChannel)}>Fetch New Videos</Button>
         <Button
           className="user-button"
-          variant="outlined"
+          variant="contained"
           color="secondary"
-          disabled={true}
-          onClick={() => setDialogIsOpen(true)}>Fetch All Videos</Button>
+          onClick={() => getStatsForAllVids()}>Fetch All Stats</Button>
         <h2>Testing</h2>
         <Button
           className="user-button"

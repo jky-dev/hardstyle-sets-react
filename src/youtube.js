@@ -24,13 +24,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: drawerWidth,
     },
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   content: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
@@ -73,6 +73,7 @@ function Youtube(props) {
     snackbarIsOpen: false,
     snackbarMessage: '',
   });
+  const [shownVideoList, setShownVideoList] = useState([]);
   const [loadedCounter, setLoadedCounter] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -140,12 +141,14 @@ function Youtube(props) {
       return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
     console.log(allVids);
     setAllVidsSorted(allVids);
+    setShownVideoList(allVids);
     setLoading(false);
   }
 
   const handleSelectChange = channel => {
     console.log(channel);
     setSettings(settings => ({...settings, selectedChannel: channel }));
+    setShownVideoList(setAndVerifiedVideos[channel]);
   }
 
   const handleDrawerToggle = () => {
@@ -204,7 +207,7 @@ function Youtube(props) {
     <div>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
+        <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
@@ -220,7 +223,7 @@ function Youtube(props) {
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden smDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -243,7 +246,7 @@ function Youtube(props) {
           {!loading &&
             <div>
               <Typography variant="h6" className="category-heading">Most Recent</Typography>
-              <VideoList videos={allVidsSorted} show={settings.showVids}></VideoList>
+              <VideoList videos={shownVideoList} show={settings.showVids}></VideoList>
               {isAdmin() &&
                 <Admin
                   settings={settings}

@@ -3,12 +3,14 @@ import YouTube from 'react-youtube';
 import {
   Fade,
   Grid,
+  Typography,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import './video-list.css';
 
 function VideoList(props) {
-  const [itemsPerPage, setItemsPerPage] = useState(24);
+  const itemsPerPage = 24;
+  // const [itemsPerPage, setItemsPerPage] = useState(24);
   const [paginationCount, setPaginationCount] = useState(Math.ceil(props.videos.length / itemsPerPage));
   const [startingIndex , setStartingIndex] = useState(0);
   const [clickedVideo, setClickedVideo] = useState({});
@@ -30,6 +32,24 @@ function VideoList(props) {
     playerVars: {
       autoplay: 1
     }
+  }
+
+  const ratio = video => {
+    const total = parseInt(video.details.stats.likeCount) + parseInt(video.details.stats.dislikeCount);
+    const likes = parseInt(video.details.stats.likeCount);
+    return Math.round(likes * 100 / total);
+  }
+
+  const views = video => {
+    const views = parseInt(video.details.stats.viewCount);
+
+    if (views < 1000) return views;
+
+    if (views < 1000000) {
+      return Math.round(views/1000) + 'K';
+    }
+
+    return Math.round(views/100000)/10 + 'M';
   }
 
   const youtubeUrl = 'https://www.youtube.com/watch?v=';
@@ -60,12 +80,12 @@ function VideoList(props) {
                         videoId={video.id}
                         className="youtube-video"
                         opts={ytOpts} />
-                      : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} /> }
-                      <p variant="body1">
-                        {video.details.setProps.festival} {video.details.setProps.year}
-                        <br />
+                      : <img onClick={() => handleVideoClick(video.id)} src={video.details.thumbnails.medium.url} alt='video thumbnail'/> }
+                      <Typography variant="body1">
                         <span className="set-name">{video.details.setProps.setName}</span>
-                      </p>
+                        <span className="festival-name">{video.details.setProps.festival} {video.details.setProps.year}</span>
+                        <span>{views(video)} views {ratio(video)}% rating</span>
+                      </Typography>
                     </div>
                   </Fade>
                 </Grid>

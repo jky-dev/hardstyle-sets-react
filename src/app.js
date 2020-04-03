@@ -2,24 +2,17 @@ import React, { useState } from 'react';
 import './app.css';
 import Youtube from './youtube';
 import { auth } from './index';
-import { channels } from './channel-details';
 import {
   AppBar,
   CssBaseline,
   createMuiTheme,
   IconButton,
-  Hidden,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
   makeStyles,
   Paper,
   ThemeProvider,
   Toolbar,
   Typography,
   useMediaQuery,
-  Divider,
 } from '@material-ui/core';
 import Login from './login';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -35,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: drawerWidth,
     },
   },
@@ -47,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
@@ -57,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   content: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
@@ -68,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function App() {
-  const [name, setName] = useState(null);
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -76,10 +68,8 @@ function App() {
   auth.onAuthStateChanged(user => {
     if (user) {
       sessionStorage.setItem("user", JSON.stringify(user));
-      setName(user.displayName)
     } else {
       sessionStorage.removeItem("user");
-      setName(null);
     }
   });
 

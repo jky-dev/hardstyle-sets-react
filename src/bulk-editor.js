@@ -7,7 +7,7 @@ import {
 import { database } from './index';
 
 function BulkEditor(props) {
-  const videos = props.videos;
+  const videos = props.videos; // receives only the selected channels videos
   const [find, setFind] = useState('');
   const [replace, setReplace] = useState('');
   const [snackbarMessage, setSnackbarMessage] = useState('');
