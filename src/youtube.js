@@ -134,19 +134,24 @@ function Youtube(props) {
   }
 
   const handleAllVidsClick = () => {
+    setLoading(true);
     setShownVideoList(allVidsSorted);
     setDisplaySelectedChannel('All Channels');
     setSelectedSortType('Most Recent');
+    setLoading(false);
   }
 
   const handleChannelSelect = channel => {
+    setLoading(true);
     setSettings(settings => ({...settings, selectedChannel: channel }));
     setShownVideoList(setAndVerifiedVideos[channel]);
     setDisplaySelectedChannel(channels[channel].title);
     setSelectedSortType('Most Recent');
+    setLoading(false);
   }
 
   const handleSelectedSortType = sortType => {
+    setLoading(true);
     const sorted = [...shownVideoList];
     if (sortType === 'Most Viewed') {
       sorted.sort((a, b) => {
@@ -168,6 +173,7 @@ function Youtube(props) {
       setShownVideoList(sorted);
       setSelectedSortType(sortType);
     }
+    setLoading(false);
   }
 
   const handleDrawerToggle = () => {
