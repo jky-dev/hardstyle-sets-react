@@ -136,32 +136,34 @@ function Youtube(props) {
   const handleAllVidsClick = () => {
     setShownVideoList(allVidsSorted);
     setDisplaySelectedChannel('All Channels');
+    setSelectedSortType('Most Recent');
   }
 
-  const handleSelectChange = channel => {
-    console.log(channel);
+  const handleChannelSelect = channel => {
     setSettings(settings => ({...settings, selectedChannel: channel }));
     setShownVideoList(setAndVerifiedVideos[channel]);
     setDisplaySelectedChannel(channels[channel].title);
+    setSelectedSortType('Most Recent');
   }
 
   const handleSelectedSortType = sortType => {
+    const sorted = [...shownVideoList];
     if (sortType === 'Most Viewed') {
-      let sorted = shownVideoList.sort((a, b) => {
+      sorted.sort((a, b) => {
         return parseInt(b.details.stats.viewCount) > parseInt(a.details.stats.viewCount) ? 1 : -1 });
       setShownVideoList(sorted);
       setSelectedSortType(sortType);
     }
 
     if (sortType === 'Most Recent') {
-      let sorted = shownVideoList.sort((a, b) => {
+      sorted.sort((a, b) => {
         return b.details.publishedAt > a.details.publishedAt ? 1 : -1 });
       setShownVideoList(sorted);
       setSelectedSortType(sortType);
     }
 
     if (sortType === 'Top Rated') {
-      let sorted = shownVideoList.sort((a, b) => {
+      sorted.sort((a, b) => {
         return parseInt(b.details.stats.actualRatio) > parseInt(a.details.stats.actualRatio) ? 1 : -1 });
       setShownVideoList(sorted);
       setSelectedSortType(sortType);
@@ -215,7 +217,7 @@ function Youtube(props) {
           <ListItem
             button
             key={channels[channel].title}
-            onClick={() => handleSelectChange(channel)}>
+            onClick={() => handleChannelSelect(channel)}>
             <ListItemText primary={channels[channel].title} />
           </ListItem>
         ))}
@@ -270,7 +272,6 @@ function Youtube(props) {
               {isAdmin() &&
                 <Admin
                   settings={settings}
-                  setVideos={setVideos}
                   showSnackbar={showSnackbar}
                   dbVideos={dbVideos} >
                 </Admin>

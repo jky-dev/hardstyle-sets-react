@@ -17,7 +17,6 @@ function Admin(props) {
   const baseUrl = "https://www.googleapis.com/youtube/v3/";
 
   const settings = props.settings;
-  const setVideos = props.setVideos;
   const showSnackbar = props.showSnackbar;
   const dbVideos = props.dbVideos;
 
@@ -214,7 +213,7 @@ function Admin(props) {
   return (
     <div>
       <h1>Admin</h1>
-      <BulkEditor videos={dbVideos[settings.selectedChannel]} setVideos={setVideos}></BulkEditor>
+      <BulkEditor videos={dbVideos[settings.selectedChannel]}></BulkEditor>
       <Button
         className="user-button"
         variant="contained"
