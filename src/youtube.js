@@ -188,12 +188,6 @@ function Youtube(props) {
     setSettings(settings => ({...settings, snackbarIsOpen: false }));
   }
 
-  const setVideos = (vids) => {
-    var obj = {};
-    obj[settings.selectedChannel] = vids;
-    setDbVideos(dbVideos => ({...dbVideos, ...obj}));
-  }
-
   const showSnackbar = msg => {
     setSettings(settings => ({...settings, snackbarMessage: msg, snackbarIsOpen: true}));
   }

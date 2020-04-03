@@ -8,5 +8,5 @@ body {
 }
 
 html {
-  overflow-y: overlay; /* floating scrollbar */
+  overflow-y: scroll;
 }
